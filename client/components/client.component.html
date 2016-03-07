@@ -1,35 +1,75 @@
 <h2>Migration Auto Runner</h2>
 
-<div class="col-md-4">
+<div class="col-sm-6">
 	<form>
-	  <div class="form-group">
-	    <label for="exampleInputEmail1">Database name</label>
-	    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="localhost\sql12">
+	  <div class="form-inline">
+		  <div class="form-group">
+		    <label for="DatabaseName">Database name</label>
+		    <input type="text" class="form-control" id="databaseName" placeholder="localhost\sql12" [(ngModel)] = "dbConnection.server" required>
+		    <button type="submit" class="btn btn-default" (click)="useDefaultServer()">UseDefault</button>
+		  </div>
 	  </div>
-	<label class="radio-inline">
-		<input type="radio" name="authenticationType" id="inlineRadio1" value="option1" [(ngModel)]=""> Windowns authentication
-	</label>
-	<label class="radio-inline">
-		<input type="radio" name="authenticationType" id="inlineRadio2" value="option2"> Sql authentication
-	</label>
-	  <div class="form-group">
-	    <label for="exampleInputEmail1">Login user name</label>
-	    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="sa">
+	  <div class="form-inline">
+		  <div class="form-group">
+		    <label for="UserName">Login user name</label>
+		    <input type="text" class="form-control" id="userName" placeholder="sa" [(ngModel)] = "dbConnection.userName" required>
+		  </div>
+		  <button type="submit" class="btn btn-default" (click)="useDefaultUserName()">UseDefault</button>
 	  </div>
+
 	  <div class="form-group">
-	    <label for="exampleInputPassword1">Password</label>
-	    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+	    <label for="Password">Password</label>
+	    <input type="password" class="form-control" id="password" placeholder="Password" [(ngModel)] = "dbConnection.password" required>
 	  </div>
+
+	  <button type="submit" class="btn btn-default" (click)="onConnect()">Connect</button>
+
 	  <div class="form-group">
-	    <label for="exampleInputFile">File input</label>
+	  	<label for="databases">Databases</label>
+	  	<select class="form-control" [(ngModel)]="selectedDatabase">
+	  		<option *ngFor="#d of dbConnection.databases" [value]="d">{{d}}</option>
+	  	</select>
+	  </div>
+
+<!-- 	  <div class="form-group">
+	  	<label for="migration">Select migration </label>
+	  	<select class="form-control">
+	  		<option *ngFor="#d of dbConnection.databases" [value]="d">{{d}}</option>
+	  	</select>
+	  </div> -->
+
+	  <div class="form-group">
+	  	<label>Select All sql files and the manifest file</label>
+	  	<input type="file" multiple (change)="fileChangeEvent($event)">
+	  	<button type="submit" class="btn btn-default" (click)="clearUploadFiles()">Clear</button>
+	  	<ul>
+	  		<li *ngFor="#file of filesToShow" [class.selected]="file == selectedFile" (click)="onSelectFile(file)">{{file}}</li>
+	  	</ul> 
+	  	
+	  	<div [class.hidden]="!isShowRunButton">
+	  		<button type="submit" class="btn btn-default" (click)="runAll()">Run All</button>
+	  		
+	  	</div>
+	  	<div [class.hidden]="!isShowRunFromSelectedButton">
+	  		<button type="submit" class="btn btn-default" (click)="upload()">Run From Selected</button>
+	  	</div>
+	  	
+	  </div>
+
+	  
+
+
+	  <!-- 	  <div class="form-group">
+	    <label for="databases">D</label>
 	    <input type="file" id="exampleInputFile">
 	    <p class="help-block">Example block-level help text here.</p>
-	  </div>
-	  <div class="checkbox">
+	  </div> -->
+
+<!-- 	  <div class="checkbox">
 	    <label>
 	      <input type="checkbox"> Check me out
 	    </label>
-	  </div>
-	  <button type="submit" class="btn btn-default">Submit</button>
-	 </form>
+	  </div> -->
+	  <!-- <button type="submit" class="btn btn-default" (click)="onSubmit">Submit</button> -->
+	</form>
 </div>

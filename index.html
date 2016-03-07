@@ -3,8 +3,8 @@
     <base href="/">
     <title>Migration Folder Auto Runner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">    
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="client/css/styles.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
 
     <!-- 1. Load libraries -->
     <!-- IE required polyfills, in this exact order -->
@@ -17,10 +17,7 @@
     <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
     <script src="node_modules/angular2/bundles/router.dev.js"></script>
     <script src="node_modules/angular2/bundles/http.dev.js"></script>
-     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="ode_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/lodash/lodash.js"></script>
 
 
     <!-- 2. Configure SystemJS -->
@@ -31,8 +28,13 @@
           client: {
             format: 'register',
             defaultExtension: 'js',
-          }
+            }
+        },
+        paths:{
+            lodash: './node_modules/lodash/lodash.js'
         }
+        
+       
       });
       System.import('client/main')
             .then(null, console.error.bind(console));
