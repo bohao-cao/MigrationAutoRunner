@@ -1,6 +1,7 @@
 var express = require('express');
 var multer = require('multer');
 
+
 var app = express();
 
 // app.get('/', function(req, res){
@@ -15,9 +16,9 @@ var bodyParser = require('body-parser');
 // mongoose.connect('mongodb://localhost/hero');
 
 var allowCrossDomain = function(req, res, next){
-	res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
-	res.set('Access-Control-Allow-MEthods', 'GET,POST');
-	res.set('Access-Control-Allow-Headers', 'Content-Type');
+	res.set('Access-Control-Allow-Origin', '*');
+	// res.set('Access-Control-Allow-MEthods', 'GET,POST');
+	// res.set('Access-Control-Allow-Headers', 'Content-Type');
 
 	next();
 }
@@ -31,6 +32,6 @@ app.use(allowCrossDomain);
 var fileUpload = require('./fileUpload.js')(app);
 var connection = require('./connection.js')(app);
 
-var server = app.listen(5000, function(){
+var server = app.listen(5000,function(){
 	console.log("server running on localhost:5000");
 });

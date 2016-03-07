@@ -4,7 +4,12 @@ var memStorage = multer.memoryStorage();
 var uploadOption = multer({storage: memStorage});
 
 module.exports = function(app){
-	app.post('/upload', uploadOption.array('files'), function(req, res){
+	var multerFields = [
+		{name: 'files',},
+		{name: 'dbConnection'}
+	];
+	//
+	app.post('/upload/:server/:userName/:password',uploadOption.any(),  function(req, res){
 		console.log(req.files);
 		res.sendStatus(200);
 	});

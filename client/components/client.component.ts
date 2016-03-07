@@ -1,8 +1,9 @@
 import {Component,ElementRef, EventEmitter} from 'angular2/core';
 import {NgIf} from 'angular2/common';
-import {IDbConnection} from '../interface/IDbConnection';
-import {MigrationService} from '../services/migration.Service';
 import {HTTP_PROVIDERS} from 'angular2/http';
+import {IDbConnection, IDatabase} from '../interface/IDbConnection';
+import {MigrationService} from '../services/migration.Service';
+import {ClientAlert} from './client.alert';
 import * as _ from 'lodash';
 
 
@@ -13,7 +14,8 @@ import * as _ from 'lodash';
 	providers:[
 		HTTP_PROVIDERS,
 		MigrationService
-	]
+	],
+	directives:[ClientAlert],	
 })
 
 
@@ -28,7 +30,7 @@ export class ClientComponent{
 	isShowRunFromSelectedButton = false;
 
 	selectedFile : string;
-	selectedDatabase: string;
+	selectedDatabase: IDatabase;
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
@@ -88,7 +90,9 @@ export class ClientComponent{
 			.then(
 			dbs=> {
 				self.dbConnection.databases = dbs;
-				self.selectedDatabase = self.dbConnection.databases[0];
+				self.selectedDatabase = {
+					name: self.dbConnection.databases[0].name
+				} 
 			},
 			error=>{
 				console.log(error)
@@ -98,6 +102,8 @@ export class ClientComponent{
 
 
     runAll(){
+		this.dbConnection.databases = [this.selectedDatabase];
+		
 		this.service.RunMigrationAll(this.dbConnection, this.filesToUpload)
 			.then((res)=>{
 				res => console.log('success')
