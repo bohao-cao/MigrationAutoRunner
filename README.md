@@ -3,7 +3,7 @@
 0.First time running
 npm install
 1.Client side
-
+npm typings install -g
 npm start
 Will start the on localhost:3000
 

@@ -1,9 +1,10 @@
-import {Component,ElementRef, EventEmitter} from 'angular2/core';
-import {NgIf} from 'angular2/common';
+import {Component,ElementRef, EventEmitter, OnInit} from 'angular2/core';
+import {NgIf, CORE_DIRECTIVES} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {MigrationService} from '../services/migration.Service';
 import {ClientAlert} from './client.alert';
+import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import * as _ from 'lodash';
 
 
@@ -15,7 +16,8 @@ import * as _ from 'lodash';
 		HTTP_PROVIDERS,
 		MigrationService
 	],
-	directives:[ClientAlert],	
+	//directives: [ClientAlert]	
+	directives: [Alert]
 })
 
 
@@ -32,6 +34,8 @@ export class ClientComponent{
 	selectedFile : string;
 	selectedDatabase: IDatabase;
 
+	alerts: Array<Object> = [];
+
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
 		this.filesToShow = [];
@@ -39,6 +43,8 @@ export class ClientComponent{
 
 	useDefaultServer(){
 		this.dbConnection.server = 'localhost\\sql12';
+		this.alerts.push({ msg: 'Another alert!', type: 'warning', closable: true });
+	
 	}
 
 	useDefaultUserName(){
@@ -110,6 +116,11 @@ export class ClientComponent{
 			}
 			);
     }
+
+    OnInit(){
+
+    }
+
 
 
 }
