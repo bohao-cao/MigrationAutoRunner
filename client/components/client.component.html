@@ -41,26 +41,35 @@
 	  <div class="form-group">
 	  	<label>Select All sql files and the manifest file</label>
 	  	<input type="file" multiple (change)="fileChangeEvent($event)">
-	  	<button type="submit" class="btn btn-default" (click)="clearUploadFiles()">Clear</button>
-	  	<ul>
-	  		<li *ngFor="#file of filesToShow" [class.selected]="file == selectedFile" (click)="onSelectFile(file)">{{file}}</li>
+	  	<!-- <button type="submit" class="btn btn-default" (click)="clearUploadFiles()">Clear</button> -->
+	  	<ul style="list-style-type: none; margin-top:1em">
+	  		<li *ngFor="#file of filesToShow" [class.selected]="file == selectedFile" (click)="onSelectFile(file)">
+	  			<div class="row">
+			  		<div class="col-sm-6">
+			  			{{file.fileName}}
+			  		</div>
+			  		<div class="col-sm-2">
+				  		<i *ngIf="file.isShowStatus && file.isSuccess" class="fa fa-check fa-lg" style="color: green"></i>
+			  			<i *ngIf="file.isShowStatus && !file.isSuccess"class="fa fa-exclamation-triangle fa-lg" style="color:red"></i>
+		  			</div>
+	  			</div>
+	  		</li>
+	  		
 	  	</ul> 
 	  	
 	  	<div [class.hidden]="!isShowRunButton">
-	  		<button type="submit" class="btn btn-default" (click)="runAll()">Run All</button>
+	  		<button type="submit" class="btn btn-primary" (click)="runAll()">Run All</button>
 	  		
 	  	</div>
-	  	<div [class.hidden]="!isShowRunFromSelectedButton">
+	  	<div [class.hidden]="!isShowRunFromSelectedButton" style="margin-top:1em">
 	  		<button type="submit" class="btn btn-default" (click)="upload()">Run From Selected</button>
 	  	</div>
 	  </div>
-	 	 
+
 <!-- <alert *ngFor="#alert of alerts;#i = index" [type]="alert.type" dismissible="true" (close)="closeAlert(i)">
-  {{ alert?.msg }} -->
-<!-- </alert> -->
-
-	  
-
+  {{ alert?.msg }}
+</alert> -->
+	
 
 	  <!-- 	  <div class="form-group">
 	    <label for="databases">D</label>

@@ -2,11 +2,13 @@ import {Component,ElementRef, EventEmitter, OnInit, ViewChild} from 'angular2/co
 import {NgIf, CORE_DIRECTIVES} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
+import {IFileStatus} from '../interface/IFileStatus';
 import {MigrationService} from '../services/migration.Service';
 //import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
-import * as _ from 'lodash';
+import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
+import _ from 'lodash';
 
 
 @Component({
@@ -27,7 +29,8 @@ export class ClientComponent{
 	complete: EventEmitter = new EventEmitter();
 
 	filesToUpload: File[];
-	filesToShow: string[];
+	//This is the files recorded in the manifest
+	filesToShow: IFileStatus[];
 	dbConnection: IDbConnection;
 
 	isShowRunButton = false;
@@ -66,17 +69,32 @@ export class ClientComponent{
 
 	fileChangeEvent(fileInput: File[]){
 		let self = this;
+		this.filesToShow = [];
 		let fileReader: FileReader = new FileReader();
-
         this.filesToUpload = fileInput.target.files;
       
         fileReader.onloadend = function(filesToShow){
       		// you can perform an action with readed data here	      	
 			let ret = fileReader.result.split('\n');
 			//cannot use this as the scope is limited.
-			self.filesToShow = ret;
-			self.isShowRunButton = true;
-			console.log(self.filesToShow);
+			_(ret).forEach(function(file){
+					self.filesToShow.push({
+					fileName: file,
+					isSuccess: false,
+					isShowStatus: false
+				});
+			})
+			
+			if (self.isFilesAndManifestMatch())
+				self.isShowRunButton = true;
+			else{
+				self.filesToShow = [];
+				self.clientAlert.addAlert({
+					message: 'not a match!',
+					type: 'danger'
+				});
+			}
+				
 	      	
     	}
 
@@ -117,16 +135,58 @@ export class ClientComponent{
 
 
     runAll(){
+		var self = this;
 		this.dbConnection.databases = [this.selectedDatabase];
-		
-		this.service.RunMigrationAll(this.dbConnection, this.filesToUpload)
-			.then((res)=>{
-				res => console.log('success')
+
+		//fileToShow has the correct sequence
+		_(this.filesToShow).forEach(function(file: IFileStatus){
+
+			for (var i = 0; i < self.filesToUpload.length; i++){
+				if (_.trim(self.filesToUpload[i].name.toString())==_.trim(file.fileName)){
+					self.service.RunSqlScript(self.dbConnection, self.filesToUpload[i])
+						.then(
+						success => {
+							file.isShowStatus = true;
+							file.isSuccess = true;
+						},
+						error => {
+							file.isShowStatus = true;
+							file.isSuccess = false;
+
+						});					
+				}
 			}
-			);
+
+			// var fileToUpload = _.find(self.filesToUpload, function(f:File) {
+			// 	let fileNameMatchKey = '/' + file.fileName + '/i';
+			// 	//match keword manifest case insensitive
+			// 	return _.trim(f.name.toString())==file.fileName;
+			// });
+
+
+		})
     }
 
-    OnInit(){
+    private isFilesAndManifestMatch() : boolean{
+		let realFiles: string[]=[];
+		let manifestFiles: string[]=[];
+
+		_(this.filesToUpload).forEach(function(f: File) {
+			if (f.name.match(/manifest/i))
+				return;
+
+			realFiles.push(_.trim(f.name.toString()));
+		});
+
+
+		_(this.filesToShow).forEach(function(f: IFileStatus) {
+			manifestFiles.push(_.trim(f.fileName));
+		});
+
+
+		return _.isEqual(realFiles, manifestFiles);
+
+
 
     }
 

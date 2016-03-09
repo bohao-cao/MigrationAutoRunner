@@ -8,8 +8,8 @@ module.exports = function(app){
 		{name: 'files',},
 		{name: 'dbConnection'}
 	];
-	//
-	app.post('/upload/:server/:userName/:password',uploadOption.any(),  function(req, res){
+	
+	app.post('/upload/:server/:userName/:password',uploadOption.array('files'),  function(req, res){
 		console.log(req.files);
 		res.sendStatus(200);
 	});

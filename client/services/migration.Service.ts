@@ -24,16 +24,15 @@ export class MigrationService{
 
 	}
 
-	RunMigrationAll(dbConnection: IDbConnection, files: File[]){
+	RunSqlScript(dbConnection: IDbConnection, file: File){
 		return new Promise((res, err)=>{
 			let formData = new FormData();
 			let xhr = new XMLHttpRequest();
 			let uri = this._url + '/upload/' + encodeURIComponent(dbConnection.server) + '/' + encodeURIComponent(dbConnection.userName)
 				+ '/' + encodeURIComponent(dbConnection.password);
-			for (var i = 0; i < files.length; i++) {
-				formData.append('files', files[i], files[i].name);
-			}
 			
+			formData.append('files', file, file.name);
+				
 			//formData.append('files', JSON.stringify(dbConnection),'a');
 			xhr.open("POST", uri, true);
 			xhr.send(formData);			
