@@ -1,10 +1,11 @@
-import {Component,ElementRef, EventEmitter, OnInit} from 'angular2/core';
+import {Component,ElementRef, EventEmitter, OnInit, ViewChild} from 'angular2/core';
 import {NgIf, CORE_DIRECTIVES} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {MigrationService} from '../services/migration.Service';
+//import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
+import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
-import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import * as _ from 'lodash';
 
 
@@ -16,12 +17,13 @@ import * as _ from 'lodash';
 		HTTP_PROVIDERS,
 		MigrationService
 	],
-	//directives: [ClientAlert]	
-	directives: [Alert]
+	directives: [ClientAlert]	
+	//directives: [Alert]
 })
 
 
 export class ClientComponent{
+	@ViewChild(ClientAlert) clientAlert: ClientAlert; 
 	complete: EventEmitter = new EventEmitter();
 
 	filesToUpload: File[];
@@ -34,7 +36,7 @@ export class ClientComponent{
 	selectedFile : string;
 	selectedDatabase: IDatabase;
 
-	alerts: Array<Object> = [];
+	alert: IAlert;
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
@@ -43,12 +45,19 @@ export class ClientComponent{
 
 	useDefaultServer(){
 		this.dbConnection.server = 'localhost\\sql12';
-		this.alerts.push({ msg: 'Another alert!', type: 'warning', closable: true });
-	
+		//this.alerts.push({ msg: 'Another alert!', type: 'warning', closable: true });
+		this.clientAlert.addAlert({
+			message: 'Another alert!',
+			type: 'warning'
+		});
 	}
 
 	useDefaultUserName(){
 		this.dbConnection.userName = "sa";
+		this.clientAlert.addAlert({
+			message: 'default name is used',
+			type: 'danger'
+		});
 	}
 
 	clearUploadFiles(){

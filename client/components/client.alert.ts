@@ -1,42 +1,39 @@
 import { Component, Input} from 'angular2/core';
 import { CORE_DIRECTIVES } from 'angular2/common';
 import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
+import {IAlert} from '../interface/IAlert';
 
 @Component({
   selector: 'client-alert',
   templateUrl: "client/components/client.alert.html",
   directives: [Alert, CORE_DIRECTIVES],
-  inputs:['message']
+  //inputs:['message']
 })
 
+//types danger, success, warning, info
 export class ClientAlert {
-  @Input() message: any;
-  // alerts: Array<Object> = [
-  //   {
-  //     type: 'danger',
-  //     msg: 'Oh snap! Change a few things up and try submitting again.'
-  //   },
-  //   {
-  //     type: 'success',
-  //     msg: 'Well done! You successfully read this important alert message.',
-  //     closable: true
-  //   }
-  // ];
-
-  // alerts: Array<Object> =[{
-  //   type: .type,
-  //   msg: this.message.msg
-  // }]
-
-  // closeAlert(i: number) {
-  //   this.alerts.splice(i, 1);
-  // }
-
-  // addAlert() {
-  //   this.alerts.push({ msg: 'Another alert!', type: 'warning', closable: true });
-  // }
-
-  clostMyAlert(){
-    
+  
+  alerts: Array<Object> = [];
+  
+  closeAlert(i: number) {
+    this.alerts.splice(i, 1);
   }
+
+  addAlert(message: IAlert) {
+    let timeout = 0;
+    if (message.type == "warning")
+      timeout = 3000;
+    if (message.type == "danger")
+    timeout = 10000;
+    this.alerts.push(
+      {
+        type: message.type,
+        message: message.message,
+        closable: true,
+        dismissOnTimeout: timeout
+      }
+    );
+      
+  }
+
 }
