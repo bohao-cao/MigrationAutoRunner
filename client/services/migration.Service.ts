@@ -10,7 +10,6 @@ import {Observable}     from 'rxjs/Observable';
 export class MigrationService{
 	_url = 'http://localhost:5000';
 
-
 	constructor(private http: Http){}
 
 	GetAllAvailableDatabases(dbConnection:IDbConnection){
@@ -18,27 +17,41 @@ export class MigrationService{
 			+ '/' + encodeURIComponent(dbConnection.password);
 		return this.http.get(uri)
 			.toPromise()
-			.then(res => <IDatabase[]>res.json()
-			, this.handleError)
-			.then(data => { return data;});
+			.then(
+				res => { 
+					return <IDatabase[]>res.json(); 
+				}
+				,this.handleError);
 
 	}
 
-	RunSqlScript(dbConnection: IDbConnection, file: File){
-		return new Promise((res, err)=>{
+	RunSqlScript(dbConnection: IDbConnection, file: File) {
+		let self = this;
+		return  new Promise((res, err) => {
 			let formData = new FormData();
 			let xhr = new XMLHttpRequest();
+
 			let uri = this._url + '/upload/' + encodeURIComponent(dbConnection.server) + '/' + encodeURIComponent(dbConnection.userName)
-				+ '/' + encodeURIComponent(dbConnection.password);
-			
-			formData.append('files', file, file.name);
-				
+				+ '/' + encodeURIComponent(dbConnection.password) + '/' + encodeURIComponent(dbConnection.databases[0]);
+			formData.append('file', file, file.name);
+
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4){
+					if (xhr.status === 200) {
+						return res(xhr.response);						
+					}
+					else {
+						err(self.handleError({ message: xhr.response }));
+					}					
+				}
+			}
+
 			//formData.append('files', JSON.stringify(dbConnection),'a');
 			xhr.open("POST", uri, true);
+			
 			xhr.send(formData);			
-		})
+		});
 
-		
 	}
 
 

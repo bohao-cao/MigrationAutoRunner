@@ -27,7 +27,7 @@
 	  <div class="form-group">
 	  	<label for="databases">Databases</label>
 	  	<select class="form-control" [(ngModel)]="selectedDatabase">
-	  		<option *ngFor="#d of dbConnection.databases" [value]="d">{{d.name}}</option>
+	  		<option *ngFor="#d of dbConnection.databases" [value]="d">{{d}}</option>
 	  	</select>
 	  </div>
 
