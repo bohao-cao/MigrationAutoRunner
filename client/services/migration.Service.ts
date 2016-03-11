@@ -31,7 +31,7 @@ export class MigrationService{
 			let uri = this._url + '/upload/' + encodeURIComponent(dbConnection.server) + '/' + encodeURIComponent(dbConnection.userName)
 				+ '/' + encodeURIComponent(dbConnection.password);
 			
-			formData.append('files', file, file.name);
+			formData.append('file', file, file.name);
 				
 			//formData.append('files', JSON.stringify(dbConnection),'a');
 			xhr.open("POST", uri, true);
