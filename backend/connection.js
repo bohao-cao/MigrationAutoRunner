@@ -4,7 +4,7 @@ var sql = require('mssql');
 module.exports = function(app){
 	app.get('/allDatabases/:server/:userName/:password', function(req, res){
 		if(process.platform =='darwin')
-			res.send(['A','B','C']);
+			return res.send([{name:'A'},{name:'B'},{name:'C'}]);
 
 
 

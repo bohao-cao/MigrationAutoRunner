@@ -1,5 +1,5 @@
 import {Component,ElementRef, EventEmitter, OnInit, ViewChild} from 'angular2/core';
-import {NgIf, CORE_DIRECTIVES} from 'angular2/common';
+import {NgIf, CORE_DIRECTIVES, NgForm} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {IFileStatus} from '../interface/IFileStatus';
@@ -41,6 +41,9 @@ export class ClientComponent{
 
 	alert: IAlert;
 
+	connectionInfoName: string;
+	isShowConnectionName: boolean;
+
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
 		this.filesToShow = [];
@@ -59,12 +62,24 @@ export class ClientComponent{
 		this.dbConnection.userName = "sa";
 		this.clientAlert.addAlert({
 			message: 'default name is used',
-			type: 'danger'
+			type: 'info'
 		});
 	}
 
 	clearUploadFiles(){
 		this.filesToUpload = [];
+	}
+
+	discardConnectionInfo(){
+		this.clientAlert.addAlert({
+			message: 'Connection info is not saved',
+			type: 'info'
+		});
+		this.connectionInfoName = "";
+		this.isShowConnectionName = false;
+	}
+	saveConnectionInfo(){
+		this.isShowConnectionName = false;
 	}
 
 	fileChangeEvent(fileInput: File[]){
