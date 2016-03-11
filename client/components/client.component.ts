@@ -37,7 +37,7 @@ export class ClientComponent{
 	isShowRunFromSelectedButton = false;
 
 	selectedFile : string;
-	selectedDatabase: IDatabase;
+	selectedDatabase: string;
 
 	alert: IAlert;
 
@@ -122,10 +122,13 @@ export class ClientComponent{
 		this.service.GetAllAvailableDatabases(this.dbConnection)
 			.then(
 			dbs=> {
-				self.dbConnection.databases = dbs;
-				self.selectedDatabase = {
-					name: self.dbConnection.databases[0].name
-				} 
+				let viewDbs: string[] = [];
+				_(dbs).forEach(function(db: IDatabase) {
+					viewDbs.push(db.name);
+				});
+
+				self.dbConnection.databases = viewDbs;
+				self.selectedDatabase = viewDbs[0];					
 			},
 			error=>{
 				console.log(error)
@@ -134,22 +137,30 @@ export class ClientComponent{
     }
 
 
-    runAll(){
+    runAll(){    	
 		var self = this;
-		this.dbConnection.databases = [this.selectedDatabase];
+		let dbConnection = _.clone(this.dbConnection);
+		dbConnection.databases = [this.selectedDatabase];			
 
 		//fileToShow has the correct sequence
 		_(this.filesToShow).forEach(function(file: IFileStatus){
 
 			for (var i = 0; i < self.filesToUpload.length; i++){
 				if (_.trim(self.filesToUpload[i].name.toString())==_.trim(file.fileName)){
-					self.service.RunSqlScript(self.dbConnection, self.filesToUpload[i])
+					self.service.RunSqlScript(dbConnection, self.filesToUpload[i])
 						.then(
-						success => {
+						data => {
+							
 							file.isShowStatus = true;
 							file.isSuccess = true;
-						},
+						})
+						.catch(
 						error => {
+							let errOutput = "error executing " + file.fileName + " : " + error._result;
+							self.clientAlert.addAlert({
+								message:  errOutput,
+								type: 'danger'
+							});
 							file.isShowStatus = true;
 							file.isSuccess = false;
 

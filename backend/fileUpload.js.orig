@@ -1,9 +1,16 @@
 var multer = require('multer');
 var _= require('lodash');
+<<<<<<< HEAD
+var memStorage = multer.memoryStorage();
+//var uploadOption = multer({storage: memStorage});
+var uploadOption = multer({dest:'tmp/files/'});
+var fs = require('fs');
+=======
 var upload = multer({ dest: 'uploads/' });
 var fs = require('fs');
 var sql = require('mssql');
 // var uploadOption = multer({storage: memStorage});
+>>>>>>> 370269a5051642031945ae7db42d3d329c2a3530
 
 module.exports = function(app){
 	var multerFields = [
@@ -11,6 +18,12 @@ module.exports = function(app){
 		{name: 'dbConnection'}
 	];
 	
+<<<<<<< HEAD
+	app.post('/upload/:server/:userName/:password',uploadOption.single('file'),  function(req, res){
+		var date  = fs.readFileSync('tmp/files/');
+			
+		res.sendStatus(200);
+=======
 	app.post('/upload/:server/:userName/:password/:database',upload.single('file'),  function(req, res){
 		console.log(req.file);
 		try{
@@ -54,6 +67,7 @@ module.exports = function(app){
 				res.status(400).send(err.message);
 			});
 		
+>>>>>>> 370269a5051642031945ae7db42d3d329c2a3530
 		
 	});
 };
