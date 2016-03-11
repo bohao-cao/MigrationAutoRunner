@@ -32,6 +32,7 @@ export class MigrationService{
 			let xhr = new XMLHttpRequest();
 
 			let uri = this._url + '/upload/' + encodeURIComponent(dbConnection.server) + '/' + encodeURIComponent(dbConnection.userName)
+
 				+ '/' + encodeURIComponent(dbConnection.password) + '/' + encodeURIComponent(dbConnection.databases[0]);
 			formData.append('file', file, file.name);
 

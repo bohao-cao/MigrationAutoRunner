@@ -50,8 +50,8 @@ export class ClientComponent{
 		this.dbConnection.server = 'localhost\\sql12';
 		//this.alerts.push({ msg: 'Another alert!', type: 'warning', closable: true });
 		this.clientAlert.addAlert({
-			message: 'Another alert!',
-			type: 'warning'
+			message: 'Default server name is used!',
+			type: 'info'
 		});
 	}
 
