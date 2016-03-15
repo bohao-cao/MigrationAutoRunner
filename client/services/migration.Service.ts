@@ -46,7 +46,6 @@ export class MigrationService{
 					}					
 				}
 			}
-
 			//formData.append('files', JSON.stringify(dbConnection),'a');
 			xhr.open("POST", uri, true);
 			
@@ -65,9 +64,11 @@ export class MigrationService{
 			database: dbConnection.databases[0],
 			profileName: profileName,
 		};
-		let headers = new Headers({ 
-			'Content-Type': 'application/json',
-			'Access-Control-Allow-Origin':'*' });
+		let headers = new Headers({ 					
+			'Access-Control-Request-Headers': 'Content-Type',
+			'Access-Control-Allow-Origin':'*',			
+			'Content-Type': 'application/json'
+			});
 		let options = new RequestOptions({ headers: headers });
 
 		return this.http.post(uri, JSON.stringify(body), options)

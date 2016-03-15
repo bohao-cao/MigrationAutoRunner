@@ -33,24 +33,30 @@ module.exports = function(app){
 
 	app.post('/connectionInfo', function(req, res){
 
-		var connectionFile = './connectionInfo.config.json';
-		var conntionInfo = {
-			profileName : req.params.profileName,
-			server: req.params.server,
-			userName: req.params.userName,
-			password: req.params.password,
-			database: req.params.database
+		var connectionFile = 'connectionInfo.json';
+		var connectionInfo = {
+			profileName : req.body.profileName,
+			server: req.body.server,
+			userName: req.body.userName,
+			password: req.body.password,
+			database: req.body.database
 		};
 
 		fs.exists(connectionFile, (exists)=>{
 			if(exists){
-				fs.appendFile(connectionFile, conntionInfo, function(err){
-					console.log(err);
+				fs.appendFile(connectionFile, JSON.stringify(connectionInfo), function(err){
+					if(err)
+						console.log(err);
+					else
+						res.status(200).send();
 				})
 			}
 			else{
-				fs.writeFile(connectionFile, connectionInfo, function(err){
-					console.log(err);
+				fs.writeFile(connectionFile, JSON.stringify(connectionInfo), function(err){
+					if(err)
+						console.log(err);
+					else
+						res.status(200).send();
 				})
 			}
 		})
