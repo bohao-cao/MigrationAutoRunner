@@ -55,6 +55,31 @@ export class MigrationService{
 
 	}
 
+	SaveConnectionInfo(dbConnection: IDbConnection, profileName: string) {
+		
+		let uri = this._url + '/connectionInfo';
+		let body = {
+			server: dbConnection.server,
+			userName: dbConnection.userName,
+			password: dbConnection.password,
+			database: dbConnection.databases[0],
+			profileName: profileName,
+		};
+		let headers = new Headers({ 
+			'Content-Type': 'application/json',
+			'Access-Control-Allow-Origin':'*' });
+		let options = new RequestOptions({ headers: headers });
+
+		return this.http.post(uri, JSON.stringify(body), options)
+			.toPromise()
+			.then(
+			res => {
+				return res;
+			}
+			, this.handleError);
+		
+	}
+	
 
 	handleError(error: any){
 		// in a real world app, we may send the error to some remote logging infrastructure

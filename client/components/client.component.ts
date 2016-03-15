@@ -39,7 +39,7 @@ export class ClientComponent{
 
 	alert: IAlert;
 
-	connectionInfoName: string;
+	profileName: string;
 	isShowConnectionName: boolean;
 
 	constructor(private service: MigrationService){
@@ -72,11 +72,21 @@ export class ClientComponent{
 			message: 'Connection info is not saved',
 			type: 'info'
 		});
-		this.connectionInfoName = "";
+		this.profileName = "";
 		this.isShowConnectionName = false;
 	}
-	saveConnectionInfo(){
+	saveConnectionInfo() {
+		let dbConnection = _.clone(this.dbConnection);
+		dbConnection.databases = [this.selectedDatabase];	
 		this.isShowConnectionName = false;
+		this.service.SaveConnectionInfo(dbConnection, this.profileName).then(
+			success=>{
+
+			},
+			error=>{
+
+			});
+
 	}
 
 	fileChangeEvent(fileInput: File[]){
