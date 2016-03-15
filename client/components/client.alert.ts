@@ -21,7 +21,7 @@ export class ClientAlert {
 
   addAlert(message: IAlert) {
     let timeout = 0;
-    if (message.type == "warning")
+    if (message.type == "warning" || message.type == "success" || message.type == "info")
       timeout = 3000;
     if (message.type == "danger")
     timeout = 10000;

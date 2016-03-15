@@ -4,12 +4,11 @@ import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {IFileStatus} from '../interface/IFileStatus';
 import {MigrationService} from '../services/migration.Service';
-//import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
 import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import _ from 'lodash';
-
+import {async} from 'async';
 
 @Component({
 	selector: 'migration-auto-runner',
@@ -20,7 +19,6 @@ import _ from 'lodash';
 		MigrationService
 	],
 	directives: [ClientAlert]	
-	//directives: [Alert]
 })
 
 
@@ -50,10 +48,9 @@ export class ClientComponent{
 	}
 
 	useDefaultServer(){
-		this.dbConnection.server = 'localhost\\sql12';
-		//this.alerts.push({ msg: 'Another alert!', type: 'warning', closable: true });
+		this.dbConnection.server = 'localhost\\sql12';		
 		this.clientAlert.addAlert({
-			message: 'Default server name is used!',
+			message: 'Default user name' + this.dbConnection.server + 'is used.',
 			type: 'info'
 		});
 	}
@@ -61,7 +58,7 @@ export class ClientComponent{
 	useDefaultUserName(){
 		this.dbConnection.userName = "sa";
 		this.clientAlert.addAlert({
-			message: 'default name is used',
+			message: 'Default user name' + this.dbConnection.userName + 'is used.',
 			type: 'info'
 		});
 	}
@@ -146,7 +143,11 @@ export class ClientComponent{
 				self.selectedDatabase = viewDbs[0];					
 			},
 			error=>{
-				console.log(error)
+				let errorOutput = "error when login:" + error;
+				self.clientAlert.addAlert({
+					message: errorOutput,
+					type: 'danger'
+				});
 			});
 			
     }
@@ -210,7 +211,7 @@ export class ClientComponent{
 		});
 
 
-		return _.isEqual(realFiles, manifestFiles);
+		return _.isEqual(realFiles.sort(), manifestFiles.sort());
 
 
 
