@@ -23,11 +23,8 @@ module.exports = function(app){
 			})
 		})
 		.catch(function(err){
-			console.log(err);
 			res.status(400).send(err.message);
-		});
-		
-		//var ret = ['A','B','C'];		
+		});		
 		
 	});
 
@@ -35,7 +32,7 @@ module.exports = function(app){
 
 		var connectionFile = 'connectionInfo.json';
 		var connectionInfo = {
-			profileName : req.body.profileName,
+			profileName: req.body.profileName,
 			server: req.body.server,
 			userName: req.body.userName,
 			password: req.body.password,
@@ -45,8 +42,10 @@ module.exports = function(app){
 		fs.exists(connectionFile, (exists)=>{
 			if(exists){
 				fs.appendFile(connectionFile, JSON.stringify(connectionInfo), function(err){
-					if(err)
-						console.log(err);
+					if(err){
+						res.status(500).send(err);
+					}
+					
 					else
 						res.status(200).send();
 				})
@@ -54,7 +53,7 @@ module.exports = function(app){
 			else{
 				fs.writeFile(connectionFile, JSON.stringify(connectionInfo), function(err){
 					if(err)
-						console.log(err);
+						cres.status(500).send(err);
 					else
 						res.status(200).send();
 				})

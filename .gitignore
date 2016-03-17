@@ -4,3 +4,4 @@ terminal.glue
 client/**/*.js
 client/**/*.js.map
 backend/files/*
+connectionInfo.json

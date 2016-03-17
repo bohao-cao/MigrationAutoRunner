@@ -1,6 +1,6 @@
 var express = require('express');
 var multer = require('multer');
-
+var bodyParser = require('body-parser');
 
 var app = express();
 
@@ -9,7 +9,7 @@ var app = express();
 // 	res.json({hello:"World"});
 // });
 	
-var bodyParser = require('body-parser');
+
 
 //database connection
 // var mongoose = require('mongoose');
