@@ -75,6 +75,7 @@ export class ClientComponent{
 		this.profileName = "";
 		this.isShowConnectionName = false;
 	}
+
 	saveConnectionInfo() {
 		let dbConnection = _.clone(this.dbConnection);
 		dbConnection.databases = [this.selectedDatabase];	
@@ -169,45 +170,61 @@ export class ClientComponent{
     }
 
 
-    runAll(){    	
+    runAll(){   
 		var self = this;
 		let dbConnection = _.clone(this.dbConnection);
-		dbConnection.databases = [this.selectedDatabase];			
+		dbConnection.databases = [this.selectedDatabase];	
+		let tasks = [];
 
+		let f = function runSqlScript(dbConnection, file:File, fileView: IFileStatus, callback){
+			this.service.RunSqlScript(dbConnection, file)
+				.then(
+				data => {
+					fileView.isShowStatus = true;
+					fileView.isSuccess = true;
+				})
+				.catch(
+				error => {
+					let errOutput = "error executing " + fileView.fileName + " : " + error._result;
+					this.clientAlert.addAlert({
+						message: errOutput,
+						type: 'danger'
+					});
+					fileView.isShowStatus = true;
+					fileView.isSuccess = false;
+					callback(error);
+				});
+		}	
+
+		function finalCallback(err, result) {
+			if (err) {
+				let errOutput = 'Run all terminated.'
+				this.clientAlert.addAlert({
+					message: errOutput,
+					type: 'danger'
+				});
+			}
+			else {
+				let success = 'Run all succeeded.'
+				this.clientAlert.addAlert({
+					message: success,
+					type: 'success'
+				});
+			}
+		};
+		
 		//fileToShow has the correct sequence
-		_(this.filesToShow).forEach(function(file: IFileStatus){
-
-			for (var i = 0; i < self.filesToUpload.length; i++){
-				if (_.trim(self.filesToUpload[i].name.toString())==_.trim(file.fileName)){
-					self.service.RunSqlScript(dbConnection, self.filesToUpload[i])
-						.then(
-						data => {
-							
-							file.isShowStatus = true;
-							file.isSuccess = true;
-						})
-						.catch(
-						error => {
-							let errOutput = "error executing " + file.fileName + " : " + error._result;
-							self.clientAlert.addAlert({
-								message:  errOutput,
-								type: 'danger'
-							});
-							file.isShowStatus = true;
-							file.isSuccess = false;
-
-						});					
+		_(this.filesToShow).forEach(function(fileView: IFileStatus) {
+			for (var i = 0; i < self.filesToUpload.length; i++) {
+				if (_.trim(self.filesToUpload[i].name.toString()) === _.trim(fileView.fileName)) {
+					tasks.push(function(callback) {
+						f(dbConnection, self.filesToUpload[i], fileView, callback);
+					});
 				}
 			}
+		});
 
-			// var fileToUpload = _.find(self.filesToUpload, function(f:File) {
-			// 	let fileNameMatchKey = '/' + file.fileName + '/i';
-			// 	//match keword manifest case insensitive
-			// 	return _.trim(f.name.toString())==file.fileName;
-			// });
-
-
-		})
+		async.series(tasks, finalCallback);
     }
 
     private isFilesAndManifestMatch() : boolean{

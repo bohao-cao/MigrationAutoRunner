@@ -30,49 +30,49 @@ module.exports = function(app){
 		catch(e){
 			console.log(e);
 		}
-
 		var tasks = [];
-		_(queries).forEach(function(query){
-			var q = query;
-			var f = function runEachQuery(query, callback){
-				console.log(query);
-				callback(null,query);
-				// var sqlReq = new sql.Request();
-				// sqlReq.batch(query, function(err, recordsets){
-				// 	//delete file after processing
-				// 	fs.unlinkSync('uploads/' + req.file.filename);
-				// 	if(err)
-				// 		callback(err);
-					
-				//})
-			};
-			tasks.push(function(callback){
-				f(q,callback);
 
+		sql.connect(config).then(function(){			
+			
+			_(queries).forEach(function(query){
+				if(query === '' || query === undefined)
+					return;
+				var q = query;
+				var f = function runEachQuery(query, callback){
+					//console.log(query);
+					var sqlReq = new sql.Request();
+					sqlReq.batch(query, function(err){					
+						if(err)
+							callback(err);
+						else
+							callback(null,'success');
+					});				
+				};
+				tasks.push(function(callback){
+					f(q,callback);
+
+				});
 			});
+
+			function finalCallback(err, results){
+				//delete file after processing
+				fs.unlinkSync('uploads/' + req.file.filename);
+				if(err)
+					res.status(400).send(err.message);
+				else
+					res.status(200).send(results);
+			};
+
+			async.series(tasks,finalCallback);
+		})
+		.catch(function(err){
+			//delete file after processing
+			fs.unlinkSync('uploads/' + req.file.filename);
+			console.log(err);
+			res.status(400).send(err.message);
 		});
-
-		function finalCallback(err, results){
-			if(err)
-				res.status(400).send(err.message);
-			else
-				res.status(200).send(recordsets);
-		}
-
-		async.series(tasks,finalCallback);
-
-
-		// sql.connect(config)
-		// 	.then(function(){			
-		// 		//TODO: add back here
-		// 	})
-		// 	.catch(function(err){
-		// 		//delete file after processing
-		// 		fs.unlinkSync('uploads/' + req.file.filename);
-		// 		console.log(err);
-		// 		res.status(400).send(err.message);
-		// 	});
 		
 		
+	
 	});
 };

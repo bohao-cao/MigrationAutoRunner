@@ -5,3 +5,4 @@ client/**/*.js
 client/**/*.js.map
 backend/files/*
 connectionInfo.json
+backend/uploads/
