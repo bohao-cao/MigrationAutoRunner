@@ -51,7 +51,6 @@ export class MigrationService{
 			
 			xhr.send(formData);			
 		});
-
 	}
 
 	SaveConnectionInfo(dbConnection: IDbConnection, profileName: string) {
