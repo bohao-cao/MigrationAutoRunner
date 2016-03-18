@@ -3,7 +3,50 @@
     color: white;
   }
 
+ .ng-valid[required] {
+  border-left: 5px solid #42A948; /* green */
+}
 
- .form-group{
+.ng-invalid {
+  border-left: 5px solid #a94442; /* red */
+}
+
+.grid{
+	display: -webkit-flex;
+	display: flex;
+}
+
+.col{
+	-webkit-flex:1;
+	flex:1;
+}
+
+ .group{
+ 	display:-webkit-flex;
  	margin-top: 1em;
+ 	/*flex-direction: column;*/
  }
+
+.form-fields-group{
+	flex-flow: row nowrap;
+	align-items: flex-end;
+
+}
+
+.form1{
+	-webkit-flex:5;
+	flex:5;
+	margin-left:1em;
+	order:1;
+}
+
+.form2{
+	-webkit-flex:2;
+	flex:2;
+	margin-left:1em;
+	order:2;
+}
+
+.valiation{
+	margin-top: 1em;
+}
