@@ -1,3 +1,7 @@
+.h2{
+	background-color: green;
+}
+
 .selected {
     background-color: #CFD8DC !important;
     color: white;
@@ -22,22 +26,24 @@
 }
 
  .group{
- 	display:-webkit-flex;
- 	margin-top: 1em;
+ 	/*display:-webkit-flex;*/
+ 	margin-top: .5em;
  	/*flex-direction: column;*/
  }
 
 .form-fields-group{
-	flex-flow: row nowrap;
+	display: inline-flex;
+	/*flex-flow: row nowrap;*/
 	align-items: flex-end;
-
+	justify-content: space-around;
 }
 
 .form1{
 	-webkit-flex:5;
-	flex:5;
-	margin-left:1em;
+	flex:5;	
 	order:1;
+	width: 300px;	
+	margin:.2em 0 0 1em ;	
 }
 
 .form2{
@@ -48,5 +54,18 @@
 }
 
 .valiation{
-	margin-top: 1em;
+	margin:.2em .5em 0 0 ;	
+}
+
+.label{
+	display:block;
+}
+
+.alert{
+	margin:.5em .5em 0 0 ;
+
+}
+
+.button{
+	margin:.5em 0 0 1em ;
 }

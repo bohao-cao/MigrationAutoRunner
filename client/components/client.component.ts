@@ -47,6 +47,7 @@ export class ClientComponent{
 		this.filesToShow = [];
 	}
 
+	//view event handler
 	useDefaultServer(){
 		this.dbConnection.server = 'localhost\\sql12';		
 		this.clientAlert.addAlert({
@@ -145,6 +146,7 @@ export class ClientComponent{
 		}
     }
 
+    //service call
     onConnect(){
 		let self = this;
 		this.service.GetAllAvailableDatabases(this.dbConnection)
@@ -224,8 +226,10 @@ export class ClientComponent{
 			}
 		});
 
-		async.series(tasks, finalCallback);
+		async.series(tasks.bind(this), finalCallback);
     }
+
+    //private utility methodsa
 
     private isFilesAndManifestMatch() : boolean{
 		let realFiles: string[]=[];
