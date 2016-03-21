@@ -1,5 +1,6 @@
+export enum Status { Success, Failed, Busy, None };
+
 export interface IFileStatus{
 	fileName: string;
-	isSuccess: boolean;
-	isShowStatus: boolean;
+	status: Status;
 }

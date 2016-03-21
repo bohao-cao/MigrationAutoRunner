@@ -4,8 +4,12 @@ var fs = require('fs');
 
 module.exports = function(app){
 	app.get('/allDatabases/:server/:userName/:password', function(req, res){
-		if(process.platform =='darwin')
-			return res.send([{name:'A'},{name:'B'},{name:'C'}]);
+		if(process.platform =='darwin'){
+			setTimeout(function(){
+				return res.send([{name:'A'},{name:'B'},{name:'C'}]);
+			}, 1000);
+			//return res.send([);
+		}
 
 		var config = {
 			server: req.params.server,

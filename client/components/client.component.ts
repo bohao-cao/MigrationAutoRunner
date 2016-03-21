@@ -2,13 +2,13 @@ import {Component,ElementRef, EventEmitter, OnInit, ViewChild} from 'angular2/co
 import {NgIf, CORE_DIRECTIVES, NgForm} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
-import {IFileStatus} from '../interface/IFileStatus';
+import {IFileStatus, Status} from '../interface/IFileStatus';
 import {MigrationService} from '../services/migration.Service';
 import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
 import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import _ from 'lodash';
-import {async} from 'async';
+import async from 'async';
 
 @Component({
 	selector: 'migration-auto-runner',
@@ -109,8 +109,7 @@ export class ClientComponent{
 			_(ret).forEach(function(file){
 					self.filesToShow.push({
 					fileName: file,
-					isSuccess: false,
-					isShowStatus: false
+					status: Status.None,
 				});
 			})
 			
@@ -176,22 +175,22 @@ export class ClientComponent{
 		dbConnection.databases = [this.selectedDatabase];	
 		let tasks = [];
 
-		let f = function runSqlScript(dbConnection, file:File, fileView: IFileStatus, callback){
-			this.service.RunSqlScript(dbConnection, file)
+		var f = function runSqlScript(self, fileToUploadIndex, fileView: IFileStatus, callback){
+			fileView.status = Status.Busy;
+			self.service.RunSqlScript(dbConnection, self.filesToUpload[fileToUploadIndex])
 				.then(
 				data => {
-					fileView.isShowStatus = true;
-					fileView.isSuccess = true;
+					fileView.status = Status.Success;
+					callback(null);
 				})
 				.catch(
 				error => {
 					let errOutput = "error executing " + fileView.fileName + " : " + error._result;
-					this.clientAlert.addAlert({
+					self.clientAlert.addAlert({
 						message: errOutput,
 						type: 'danger'
 					});
-					fileView.isShowStatus = true;
-					fileView.isSuccess = false;
+					fileView.status = Status.Failed;
 					callback(error);
 				});
 		}	
@@ -199,14 +198,14 @@ export class ClientComponent{
 		function finalCallback(err, result) {
 			if (err) {
 				let errOutput = 'Run all terminated.'
-				this.clientAlert.addAlert({
+				self.clientAlert.addAlert({
 					message: errOutput,
 					type: 'danger'
 				});
 			}
 			else {
 				let success = 'Run all succeeded.'
-				this.clientAlert.addAlert({
+				self.clientAlert.addAlert({
 					message: success,
 					type: 'success'
 				});
@@ -215,10 +214,11 @@ export class ClientComponent{
 		
 		//fileToShow has the correct sequence
 		_(this.filesToShow).forEach(function(fileView: IFileStatus) {
-			for (var i = 0; i < self.filesToUpload.length; i++) {
+			for (let i = 0; i < self.filesToUpload.length; i++) {
 				if (_.trim(self.filesToUpload[i].name.toString()) === _.trim(fileView.fileName)) {
+					//let idx = i;
 					tasks.push(function(callback) {
-						f(dbConnection, self.filesToUpload[i], fileView, callback);
+						f(self, i, fileView, callback);
 					});
 				}
 			}
@@ -243,13 +243,10 @@ export class ClientComponent{
 			manifestFiles.push(_.trim(f.fileName));
 		});
 
+		_.pull(manifestFiles, "");
 
 		return _.isEqual(realFiles.sort(), manifestFiles.sort());
 
-
-
     }
-
-
 
 }
