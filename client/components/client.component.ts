@@ -226,7 +226,7 @@ export class ClientComponent{
 			}
 		});
 
-		async.series(tasks.bind(this), finalCallback);
+		async.series(tasks, finalCallback);
     }
 
     //private utility methodsa
