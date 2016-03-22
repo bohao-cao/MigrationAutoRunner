@@ -1,8 +1,12 @@
 var _= require('lodash'); 
 var sql = require('mssql');
 var fs = require('fs');
+//On windows the forward slash might not work
+var ConnProfile = require('./model_connProfile.js');
 
 module.exports = function(app){
+	var connectionFile = 'connectionInfo.json';
+
 	app.get('/allDatabases/:server/:userName/:password', function(req, res){
 		if(process.platform =='darwin'){
 			setTimeout(function(){
@@ -32,9 +36,34 @@ module.exports = function(app){
 		
 	});
 
+	app.get('/allConnectionInfo', function(req, res){
+		
+		ConnProfile.find(function(err, data){
+			if(err)
+				return res.status(500).send(err);
+			else{
+				var ret = _.map(data, "profileName");
+				return res.status(200).send(ret);
+			}
+		});
+
+		// if(fs.exists(connectionFile, (exists)=>{
+		// 	fs.readFile(connectionFile, "utf-8", function(err, data){
+		// 		if(err){
+		// 			res.status(500).send(err);
+		// 		}
+		// 		else{
+		// 			var jsonData = JSON.parse(data);
+		// 			var ret = _.map(jsonData, "profileName");
+		// 			res.status(200).send(ret);
+		// 		}
+
+		// 	})
+		// }));
+	});
+
 	app.post('/connectionInfo', function(req, res){
 
-		var connectionFile = 'connectionInfo.json';
 		var connectionInfo = {
 			profileName: req.body.profileName,
 			server: req.body.server,
@@ -43,28 +72,24 @@ module.exports = function(app){
 			database: req.body.database
 		};
 
-		fs.exists(connectionFile, (exists)=>{
-			if(exists){
-				fs.appendFile(connectionFile, JSON.stringify(connectionInfo), function(err){
-					if(err){
-						res.status(500).send(err);
-					}
-					
-					else
-						res.status(200).send();
-				})
+		var newConn = new ConnProfile(connectionInfo);
+		newConn.save(function(err){
+			if(err){
+				return res.status(400).send(err);
 			}
-			else{
-				fs.writeFile(connectionFile, JSON.stringify(connectionInfo), function(err){
-					if(err)
-						cres.status(500).send(err);
-					else
-						res.status(200).send();
-				})
-			}
+			else
+				return res.status(200).send();
 		})
-		
+	});
 
+	app.delete('/connectionInfo/:name', function(req,res){
+		ConnProfile.remove({profileName: req.params.name}, function(err, data){
+			if(err)
+				return res.status(500).send(err);
+			else{
+				return res.status(200).send();
+			}
+		});
 	});
 
 

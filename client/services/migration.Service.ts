@@ -53,6 +53,29 @@ export class MigrationService{
 		});
 	}
 
+	LoadConnectionInfoList(){
+		let uri = this._url + '/allConnectionInfo';
+		return this.http.get(uri)
+			.toPromise()
+			.then(
+			res => {
+				return <string[]>res.json();
+			}
+			, this.handleError);
+
+	}
+
+	deleteConnectionInfoByName(name:string){
+		let uri = this._url + '/connectionInfo/' + encodeURIComponent(name);
+		return this.http.delete(uri)
+			.toPromise()
+			.then(
+			res => {
+				return res.status;
+			}
+			, this.handleError);
+	}
+
 	SaveConnectionInfo(dbConnection: IDbConnection, profileName: string) {
 		
 		let uri = this._url + '/connectionInfo';
