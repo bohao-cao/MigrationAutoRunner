@@ -12,9 +12,15 @@ import {IAlert} from '../interface/IAlert';
 
 //types danger, success, warning, info
 export class ClientAlert {
-  
+
   alerts: Array<Object> = [];
-  
+
+
+  clearAllAlerts(){
+    this.alerts = [];
+  }
+
+
   closeAlert(i: number) {
     this.alerts.splice(i, 1);
   }
@@ -22,7 +28,7 @@ export class ClientAlert {
   addAlert(message: IAlert) {
     let timeout = 0;
     if (message.type == "warning" || message.type == "success" || message.type == "info")
-      timeout = 3000;
+      timeout = 5000;
     if (message.type == "danger")
     timeout = 0;
     this.alerts.push(

@@ -27,7 +27,7 @@ module.exports = function(app){
 				//remove utf8's BOM marker
 				raw  = raw.replace(/^\uFEFF/, '');
 
-				queries = _.split(raw, 'GO');
+				queries = _.split(raw, '(?i)GO.*');
 				var config = {
 				server: req.params.server,
 				user: req.params.userName,

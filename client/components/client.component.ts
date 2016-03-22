@@ -34,17 +34,19 @@ export class ClientComponent{
 	isShowRunButton = false;
 	isShowRunFromSelectedButton = false;
 
-	selectedFile : string;
+	selectedFile : IFileStatus;
 	selectedDatabase: string;
 
 	alert: IAlert;
 
 	profileName: string;
 	isShowConnectionName: boolean;
+	isKeepAllLogs: boolean;
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
 		this.filesToShow = [];
+		this.isKeepAllLogs = true;
 	}
 
 	//view event handler
@@ -122,9 +124,7 @@ export class ClientComponent{
 					message: 'not a match!',
 					type: 'danger'
 				});
-			}
-				
-	      	
+			}     	
     	}
 
 		let manifestFile = _.find(this.filesToUpload, function(o) {
@@ -133,6 +133,10 @@ export class ClientComponent{
 		});
     	fileReader.readAsText(manifestFile); 
      
+    }
+
+    clearAllLogs(){
+		this.clientAlert.clearAllAlerts();
     }
 
     onSelectFile(file){
@@ -170,39 +174,20 @@ export class ClientComponent{
 			
     }
 
-
-    runAll(){   
+    runAll(){       	
 		var self = this;
+		if(!self.isKeepAllLogs)
+			self.clientAlert.clearAllAlerts();
 		let dbConnection = _.clone(this.dbConnection);
 		dbConnection.databases = [this.selectedDatabase];	
 		let tasks = [];
 
-		var f = function runSqlScript(self, fileToUploadIndex, fileView: IFileStatus, callback){
-			fileView.status = Status.Busy;
-			self.service.RunSqlScript(dbConnection, self.filesToUpload[fileToUploadIndex])
-				.then(
-				data => {
-					fileView.status = Status.Success;
-					callback(null);
-				})
-				.catch(
-				error => {
-					let errOutput = "error executing " + fileView.fileName + " : " + error._result;
-					self.clientAlert.addAlert({
-						message: errOutput,
-						type: 'danger'
-					});
-					fileView.status = Status.Failed;
-					callback(error);
-				});
-		}	
-
 		function finalCallback(err, result) {
 			if (err) {
-				let errOutput = 'Run all terminated.'
+				let errOutput = 'Run all terminated due to errors.'
 				self.clientAlert.addAlert({
 					message: errOutput,
-					type: 'danger'
+					type: 'warning'
 				});
 			}
 			else {
@@ -219,6 +204,7 @@ export class ClientComponent{
 			for (let i = 0; i < self.filesToUpload.length; i++) {
 				if (_.trim(self.filesToUpload[i].name.toString()) === _.trim(fileView.fileName)) {
 					//let idx = i;
+					let f = self.runSqlScript;
 					tasks.push(function(callback) {
 						f(self, i, fileView, callback);
 					});
@@ -229,7 +215,56 @@ export class ClientComponent{
 		async.series(tasks, finalCallback);
     }
 
-    //private utility methodsa
+    runFromSelected(){
+		var self = this;
+		if (!self.isKeepAllLogs)
+			self.clientAlert.clearAllAlerts();
+		
+		let dbConnection = _.clone(this.dbConnection);
+		dbConnection.databases = [this.selectedDatabase];
+		let tasks = [];
+
+		function finalCallback(err, result) {
+			if (err) {
+				let errOutput = 'Run all terminated due to errors.'
+				self.clientAlert.addAlert({
+					message: errOutput,
+					type: 'warning'
+				});
+			}
+			else {
+				let success = 'Run all succeeded.'
+				self.clientAlert.addAlert({
+					message: success,
+					type: 'success'
+				});
+			}
+		};
+
+		let isFoundStartingPoint = false;
+		//fileToShow has the correct sequence
+		_(this.filesToShow).forEach(function(fileView: IFileStatus) {
+			if (fileView.fileName !== self.selectedFile.fileName && !isFoundStartingPoint)
+				return;
+			else if (fileView.fileName === self.selectedFile.fileName) {
+				isFoundStartingPoint = true;
+			}
+
+			for (let i = 0; i < self.filesToUpload.length; i++) {
+				if (_.trim(self.filesToUpload[i].name.toString()) === _.trim(fileView.fileName)) {
+					//let idx = i;
+					let f = self.runSqlScript;
+					tasks.push(function(callback) {
+						f(self, i, fileView, callback);
+					});
+				}
+			}
+		});
+
+		async.series(tasks, finalCallback);
+    }
+
+    //private utility methods
 
     private isFilesAndManifestMatch() : boolean{
 		let realFiles: string[]=[];
@@ -242,7 +277,6 @@ export class ClientComponent{
 			realFiles.push(_.trim(f.name.toString()));
 		});
 
-
 		_(this.filesToShow).forEach(function(f: IFileStatus) {
 			manifestFiles.push(_.trim(f.fileName));
 		});
@@ -250,7 +284,27 @@ export class ClientComponent{
 		_.pull(manifestFiles, "");
 
 		return _.isEqual(realFiles.sort(), manifestFiles.sort());
-
     }
+
+    private runSqlScript(self, fileToUploadIndex, fileView: IFileStatus, callback) {
+	fileView.status = Status.Busy;
+	self.service.RunSqlScript(self.dbConnection, self.filesToUpload[fileToUploadIndex])
+		.then(
+		data => {
+			fileView.status = Status.Success;
+			callback(null);
+		})
+		.catch(
+		error => {
+			let errOutput = "Error executing " + fileView.fileName + " : " + error._result;
+			self.clientAlert.addAlert({
+				message: errOutput,
+				type: 'danger'
+			});
+			fileView.status = Status.Failed;
+			callback(error);
+		});
+	}
+
 
 }
