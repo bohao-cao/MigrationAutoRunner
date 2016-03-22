@@ -35,7 +35,7 @@
 	display: inline-flex;
 	/*flex-flow: row nowrap;*/
 	align-items: flex-end;
-	justify-content: space-around;
+	/*justify-content: space-around;*/
 }
 
 .form1{
@@ -53,8 +53,9 @@
 	order:2;
 }
 
-.valiation{
-	margin:.2em .5em 0 0 ;	
+.validation{
+	margin:.5em 0 0 1em !important;	
+	width: 300px;
 }
 
 .label{

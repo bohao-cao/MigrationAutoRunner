@@ -1,6 +1,7 @@
 var express = require('express');
 var multer = require('multer');
 var bodyParser = require('body-parser');
+var mongoose=require('mongoose');
 
 var app = express();
 
@@ -9,7 +10,7 @@ var app = express();
 // 	res.json({hello:"World"});
 // });
 	
-
+mongoose.connect('mongodb://localhost/mar');
 
 //database connection
 // var mongoose = require('mongoose');

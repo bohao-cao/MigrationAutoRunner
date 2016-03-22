@@ -33,6 +33,7 @@ export class ClientComponent{
 
 	isShowRunButton = false;
 	isShowRunFromSelectedButton = false;
+	isConnecting = false;
 
 	selectedFile : string;
 	selectedDatabase: string;
@@ -42,9 +43,13 @@ export class ClientComponent{
 	profileName: string;
 	isShowConnectionName: boolean;
 
+	conectionInfoList: string[];
+	selectedConnInfo: string;
+
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
 		this.filesToShow = [];
+		this.loadConnectionInfo();
 	}
 
 	//view event handler
@@ -77,12 +82,52 @@ export class ClientComponent{
 		this.isShowConnectionName = false;
 	}
 
+	loadConnectionInfo(){
+		let self = this;
+		this.service.LoadConnectionInfoList()
+			.then(
+			list => {
+				self.conectionInfoList = list;
+				if (list.length > 0)
+					self.selectedConnInfo = list[0];
+			},
+			err => {
+				console.log(err);
+			}
+			);
+	}
+
+
+	deleteSelected(){
+		let self = this;
+		this.service.deleteConnectionInfoByName(this.selectedConnInfo)
+			.then(
+			() => {
+				self.loadConnectionInfo();				
+				if (self.conectionInfoList.length > 0)
+					self.selectedConnInfo = self.conectionInfoList[0];
+				this.clientAlert.addAlert({
+					message: 'Connection Info successfully deleted.',
+					type: 'success'
+				});
+			},
+			err => {
+				this.clientAlert.addAlert({
+					message: 'Error during delete connection info:' + err,
+					type: 'danger'
+				});
+			}
+			);
+	}
+
 	saveConnectionInfo() {
+		//validation
 		let dbConnection = _.clone(this.dbConnection);
 		dbConnection.databases = [this.selectedDatabase];	
 		this.isShowConnectionName = false;
-		this.service.SaveConnectionInfo(dbConnection, this.profileName).then(
+		this.service.SaveConnectionInfo(dbConnection, _.escape(this.profileName)).then(
 			success=>{
+				this.loadConnectionInfo();
 				this.clientAlert.addAlert({
 					message: 'Connection Info successfully saved.',
 					type: 'success'
@@ -94,6 +139,10 @@ export class ClientComponent{
 					type: 'danger'
 				});
 			});
+
+	}
+
+	connectWithSelected(){
 
 	}
 
@@ -149,6 +198,7 @@ export class ClientComponent{
     //service call
     onConnect(){
 		let self = this;
+		this.isConnecting = true;
 		this.service.GetAllAvailableDatabases(this.dbConnection)
 			.then(
 			dbs=> {
@@ -158,7 +208,8 @@ export class ClientComponent{
 				});
 
 				self.dbConnection.databases = viewDbs;
-				self.selectedDatabase = viewDbs[0];					
+				self.selectedDatabase = viewDbs[0];	
+				self.isConnecting = false;				
 			},
 			error=>{
 				let errorOutput = "error when login:" + error;
@@ -166,6 +217,7 @@ export class ClientComponent{
 					message: errorOutput,
 					type: 'danger'
 				});
+				self.isConnecting = false;	
 			});
 			
     }
