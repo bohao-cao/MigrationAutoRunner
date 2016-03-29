@@ -26,3 +26,7 @@ b. Open a new cmd prompt
 mongo
 
 
+======PRODUCTION=======
+1. Use forever to host the backend on my machine;
+2. Deliver frontend to the user, modify server's address.
+3. Create instructions for installation.
