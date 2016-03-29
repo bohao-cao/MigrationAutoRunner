@@ -27,7 +27,8 @@ module.exports = function(app){
 				//remove utf8's BOM marker
 				raw  = raw.replace(/^\uFEFF/, '');
 
-				queries = _.split(raw, 'GO');
+				//wrap regEx in //, the RegEx means check GO case insensitive
+				queries = _.split(raw, /[Gg][Oo]/);
 				var config = {
 				server: req.params.server,
 				user: req.params.userName,

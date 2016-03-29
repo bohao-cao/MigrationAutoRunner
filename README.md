@@ -3,6 +3,7 @@
 0.First time running
 npm install
 npm typings install -g
+
 1.Client side
 npm start
 Will start the on localhost:3000
@@ -16,3 +17,12 @@ Will start on localhost:5000
 On another terminal:
 node-inspector -d 5858 -p 5000
 (This will start the debug port on 5858, and listen to the node server on 5000)
+
+3.database.
+(On Windows machine)
+a.cd D:\MongoDB\Server\3.2\bin
+mongod --dbpath D:\MongoDB\db
+b. Open a new cmd prompt
+mongo
+
+
