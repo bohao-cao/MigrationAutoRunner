@@ -59,10 +59,23 @@ export class MigrationService{
 			.toPromise()
 			.then(
 			res => {
-				return <string[]>res.json();
+				return <any[]>res.json();
 			}
 			, this.handleError);
 
+	}
+
+	GetConnectionDetailsById(id: number){
+		let uri = this._Url + '/connectionInfoDetail/' + encodeURIComponent(id);
+
+		return this.http.get(uri)
+			.toPromise()
+			.then({
+				res =>{
+					return <any[]> res.json();
+				}
+				,this.handleError);
+			})
 	}
 
 	deleteConnectionInfoByName(name:string){

@@ -3,6 +3,8 @@ import {NgIf, CORE_DIRECTIVES, NgForm} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {IFileStatus, Status} from '../interface/IFileStatus';
+import {IConnectionProfile} from '../interface/IConnectionProfile';
+import {IConnectionProfileDetail} from '../interface/IConnectionProfileDetail';
 import {MigrationService} from '../services/migration.Service';
 import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
@@ -44,8 +46,8 @@ export class ClientComponent{
 	isShowConnectionName: boolean;
 	isKeepAllLogs: boolean;
 
-	conectionInfoList: string[];
-	selectedConnInfo: string;
+	conectionInfoList: IConnectionProfile[];
+	selectedConnInfo: IConnectionProfile;
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
@@ -92,7 +94,7 @@ export class ClientComponent{
 			list => {
 				self.conectionInfoList = list;
 				if (list.length > 0)
-					self.selectedConnInfo = list[0];
+					self.selectedConnInfo = list[0].profileName;
 			},
 			err => {
 				console.log(err);
@@ -145,7 +147,20 @@ export class ClientComponent{
 
 	}
 
+	//connect with select profile
 	connectWithSelected(){
+		let self = this;
+		async.series([
+			function(callback){				
+				self.service.GetConnectionDetailsById(self.selectedConnInfo._id).then({
+					data=>{
+						callback(null, data);
+					};					
+				});				
+			},
+			function(callback){
+				self.loadConnectionInfo()
+			}]);
 
 	}
 
@@ -201,10 +216,10 @@ export class ClientComponent{
     }
 
     //service call
-    onConnect(){
+    onConnect(connection: IDbConnection){
 		let self = this;
 		this.isConnecting = true;
-		this.service.GetAllAvailableDatabases(this.dbConnection)
+		this.service.GetAllAvailableDatabases(connection)
 			.then(
 			dbs=> {
 				let viewDbs: string[] = [];
@@ -340,23 +355,23 @@ export class ClientComponent{
     }
 
     private runSqlScript(self, fileToUploadIndex, fileView: IFileStatus, callback) {
-	fileView.status = Status.Busy;
-	self.service.RunSqlScript(self.dbConnection, self.filesToUpload[fileToUploadIndex])
-		.then(
-		data => {
-			fileView.status = Status.Success;
-			callback(null);
-		})
-		.catch(
-		error => {
-			let errOutput = "Error executing " + fileView.fileName + " : " + error._result;
-			self.clientAlert.addAlert({
-				message: errOutput,
-				type: 'danger'
+		fileView.status = Status.Busy;
+		self.service.RunSqlScript(self.dbConnection, self.filesToUpload[fileToUploadIndex])
+			.then(
+			data => {
+				fileView.status = Status.Success;
+				callback(null);
+			})
+			.catch(
+			error => {
+				let errOutput = "Error executing " + fileView.fileName + " : " + error._result;
+				self.clientAlert.addAlert({
+					message: errOutput,
+					type: 'danger'
+				});
+				fileView.status = Status.Failed;
+				callback(error);
 			});
-			fileView.status = Status.Failed;
-			callback(error);
-		});
 	}
 
 
