@@ -7,7 +7,7 @@
             <div class="form-fields-group">
                 <div class="form1">
                     <label for="name">Load connection from saved</label>
-                    <select class="form-control" [(ngModel)]="selectedConnInfo.profileName">
+                    <select class="form-control" [(ngModel)]="selectedConnInfo">
                         <option *ngFor="#c of conectionInfoList" [value]="c">{{c.profileName}}</option>
                     </select>
                 </div>
@@ -116,7 +116,7 @@
     <div class="col">
         <div class="form1">
             <label>
-                <input type="checkbox" [(ngModel)]="isKeepAllLogs">Keep all logs</label>
+                <input type="checkbox" [(ngModel)]="isKeepAllLogs">Keep all logs between each run</label>
             <button type="submit" class="btn btn-warning" (click)="clearAllLogs()">Clear logs</button>
         </div>
         <client-alert [message]="alerts"></client-alert>

@@ -46,8 +46,8 @@ export class ClientComponent{
 	isShowConnectionName: boolean;
 	isKeepAllLogs: boolean;
 
-	conectionInfoList: IConnectionProfile[];
-	selectedConnInfo: IConnectionProfile;
+	conectionInfoList: IConnectionProfile[] = [];
+	selectedConnInfo: IConnectionProfile = {profileName:""};
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
@@ -94,7 +94,7 @@ export class ClientComponent{
 			list => {
 				self.conectionInfoList = list;
 				if (list.length > 0)
-					self.selectedConnInfo = list[0].profileName;
+					self.selectedConnInfo = list[0] ;
 			},
 			err => {
 				console.log(err);
@@ -105,7 +105,7 @@ export class ClientComponent{
 
 	deleteSelected(){
 		let self = this;
-		this.service.deleteConnectionInfoByName(this.selectedConnInfo)
+		this.service.deleteConnectionInfoByName(this.selectedConnInfo.profileName)
 			.then(
 			() => {
 				self.loadConnectionInfo();				
@@ -150,17 +150,25 @@ export class ClientComponent{
 	//connect with select profile
 	connectWithSelected(){
 		let self = this;
-		async.series([
-			function(callback){				
-				self.service.GetConnectionDetailsById(self.selectedConnInfo._id).then({
+		this.service.GetConnectionDetailsById(self.selectedConnInfo._id).then(
 					data=>{
-						callback(null, data);
+						self.dbConnection.server = data.server;
+						self.dbConnection.userName = data.userName;
+						self.dbConnection.password = data.password;
+						let connection:IDbConnection = {
+							server: data.server;
+							userName: data.userName;
+							password: data.password;							
+						}
+						self.onConnect(connection).then(
+							()=>{
+								//override selected db;
+								self.selectedDatabase = data.database;
+							}
+						);
 					};					
-				});				
-			},
-			function(callback){
-				self.loadConnectionInfo()
-			}]);
+				);		
+		
 
 	}
 
@@ -274,7 +282,7 @@ export class ClientComponent{
 					//let idx = i;
 					let f = self.runSqlScript;
 					tasks.push(function(callback) {
-						f(self, i, fileView, callback);
+						f(self, dbConnection, i, fileView, callback);
 					});
 				}
 			}
@@ -323,7 +331,7 @@ export class ClientComponent{
 					//let idx = i;
 					let f = self.runSqlScript;
 					tasks.push(function(callback) {
-						f(self, i, fileView, callback);
+						f(self, dbConnection, i, fileView, callback);
 					});
 				}
 			}
@@ -354,9 +362,9 @@ export class ClientComponent{
 		return _.isEqual(realFiles.sort(), manifestFiles.sort());
     }
 
-    private runSqlScript(self, fileToUploadIndex, fileView: IFileStatus, callback) {
+    private runSqlScript(self, dbConnection, fileToUploadIndex, fileView: IFileStatus, callback) {
 		fileView.status = Status.Busy;
-		self.service.RunSqlScript(self.dbConnection, self.filesToUpload[fileToUploadIndex])
+		self.service.RunSqlScript(dbConnection, self.filesToUpload[fileToUploadIndex])
 			.then(
 			data => {
 				fileView.status = Status.Success;

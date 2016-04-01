@@ -66,16 +66,16 @@ export class MigrationService{
 	}
 
 	GetConnectionDetailsById(id: number){
-		let uri = this._Url + '/connectionInfoDetail/' + encodeURIComponent(id);
+		let uri = this._url + '/connectionInfoDetail/' + encodeURIComponent(id);
 
 		return this.http.get(uri)
 			.toPromise()
-			.then({
+			.then(
 				res =>{
-					return <any[]> res.json();
+					return res.json();
 				}
 				,this.handleError);
-			})
+			
 	}
 
 	deleteConnectionInfoByName(name:string){

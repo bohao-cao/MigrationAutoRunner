@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var connProfileSchema = mongoose.Schema({
-	profileName: {type:[String], unique:true},
+	profileName: {type:String, unique:true},
 	server: String,
 	userName: String,
 	password: String,
