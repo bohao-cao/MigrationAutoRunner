@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var multer = require('multer');
 var bodyParser = require('body-parser');
 var mongoose=require('mongoose');
@@ -28,7 +29,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extend: true
 }));
-app.use(allowCrossDomain);
+app.use(cors());
+//app.use(allowCrossDomain);
 
 var fileUpload = require('./fileUpload.js')(app);
 var connection = require('./connection.js')(app);

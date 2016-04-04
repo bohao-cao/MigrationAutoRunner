@@ -12,6 +12,7 @@ import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import _ from 'lodash';
 import async from 'async';
 
+
 @Component({
 	selector: 'migration-auto-runner',
 	templateUrl: 'client/components/client.component.html',
@@ -156,20 +157,18 @@ export class ClientComponent{
 						self.dbConnection.userName = data.userName;
 						self.dbConnection.password = data.password;
 						let connection:IDbConnection = {
-							server: data.server;
-							userName: data.userName;
-							password: data.password;							
+							server: data.server,
+							userName: data.userName,
+							password: data.password,
+							databases: []
 						}
-						self.onConnect(connection).then(
-							()=>{
-								//override selected db;
-								self.selectedDatabase = data.database;
-							}
-						);
-					};					
-				);		
-		
-
+						self.onConnect(connection).then(()=>{
+							self.selectedDatabase = data.database;	
+						});
+						
+						
+					});					
+								
 	}
 
 	fileChangeEvent(fileInput: File[]){
@@ -227,7 +226,7 @@ export class ClientComponent{
     onConnect(connection: IDbConnection){
 		let self = this;
 		this.isConnecting = true;
-		this.service.GetAllAvailableDatabases(connection)
+		return this.service.GetAllAvailableDatabases(connection)
 			.then(
 			dbs=> {
 				let viewDbs: string[] = [];

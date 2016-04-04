@@ -8,7 +8,7 @@ import {Observable}     from 'rxjs/Observable';
 
 
 export class MigrationService{
-	_url = 'http://localhost:5000';
+	_url = 'http://10.28.17.74:5000';
 
 	constructor(private http: Http){}
 
