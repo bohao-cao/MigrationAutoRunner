@@ -3,12 +3,15 @@ import {NgIf, CORE_DIRECTIVES, NgForm} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {IFileStatus, Status} from '../interface/IFileStatus';
+import {IConnectionProfile} from '../interface/IConnectionProfile';
+import {IConnectionProfileDetail} from '../interface/IConnectionProfileDetail';
 import {MigrationService} from '../services/migration.Service';
 import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
 import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
 import _ from 'lodash';
 import async from 'async';
+
 
 @Component({
 	selector: 'migration-auto-runner',
@@ -44,8 +47,8 @@ export class ClientComponent{
 	isShowConnectionName: boolean;
 	isKeepAllLogs: boolean;
 
-	conectionInfoList: string[];
-	selectedConnInfo: string;
+	conectionInfoList: IConnectionProfile[] = [];
+	selectedConnInfo: IConnectionProfile = {profileName:""};
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
@@ -92,7 +95,7 @@ export class ClientComponent{
 			list => {
 				self.conectionInfoList = list;
 				if (list.length > 0)
-					self.selectedConnInfo = list[0];
+					self.selectedConnInfo = list[0] ;
 			},
 			err => {
 				console.log(err);
@@ -103,7 +106,7 @@ export class ClientComponent{
 
 	deleteSelected(){
 		let self = this;
-		this.service.deleteConnectionInfoByName(this.selectedConnInfo)
+		this.service.deleteConnectionInfoByName(this.selectedConnInfo.profileName)
 			.then(
 			() => {
 				self.loadConnectionInfo();				
@@ -145,8 +148,27 @@ export class ClientComponent{
 
 	}
 
+	//connect with select profile
 	connectWithSelected(){
-
+		let self = this;
+		this.service.GetConnectionDetailsById(self.selectedConnInfo._id).then(
+					data=>{
+						self.dbConnection.server = data.server;
+						self.dbConnection.userName = data.userName;
+						self.dbConnection.password = data.password;
+						let connection:IDbConnection = {
+							server: data.server,
+							userName: data.userName,
+							password: data.password,
+							databases: []
+						}
+						self.onConnect(connection).then(()=>{
+							self.selectedDatabase = data.database;	
+						});
+						
+						
+					});					
+								
 	}
 
 	fileChangeEvent(fileInput: File[]){
@@ -201,10 +223,10 @@ export class ClientComponent{
     }
 
     //service call
-    onConnect(){
+    onConnect(connection: IDbConnection){
 		let self = this;
 		this.isConnecting = true;
-		this.service.GetAllAvailableDatabases(this.dbConnection)
+		return this.service.GetAllAvailableDatabases(connection)
 			.then(
 			dbs=> {
 				let viewDbs: string[] = [];
@@ -259,7 +281,7 @@ export class ClientComponent{
 					//let idx = i;
 					let f = self.runSqlScript;
 					tasks.push(function(callback) {
-						f(self, i, fileView, callback);
+						f(self, dbConnection, i, fileView, callback);
 					});
 				}
 			}
@@ -308,7 +330,7 @@ export class ClientComponent{
 					//let idx = i;
 					let f = self.runSqlScript;
 					tasks.push(function(callback) {
-						f(self, i, fileView, callback);
+						f(self, dbConnection, i, fileView, callback);
 					});
 				}
 			}
@@ -339,24 +361,24 @@ export class ClientComponent{
 		return _.isEqual(realFiles.sort(), manifestFiles.sort());
     }
 
-    private runSqlScript(self, fileToUploadIndex, fileView: IFileStatus, callback) {
-	fileView.status = Status.Busy;
-	self.service.RunSqlScript(self.dbConnection, self.filesToUpload[fileToUploadIndex])
-		.then(
-		data => {
-			fileView.status = Status.Success;
-			callback(null);
-		})
-		.catch(
-		error => {
-			let errOutput = "Error executing " + fileView.fileName + " : " + error._result;
-			self.clientAlert.addAlert({
-				message: errOutput,
-				type: 'danger'
+    private runSqlScript(self, dbConnection, fileToUploadIndex, fileView: IFileStatus, callback) {
+		fileView.status = Status.Busy;
+		self.service.RunSqlScript(dbConnection, self.filesToUpload[fileToUploadIndex])
+			.then(
+			data => {
+				fileView.status = Status.Success;
+				callback(null);
+			})
+			.catch(
+			error => {
+				let errOutput = "Error executing " + fileView.fileName + " : " + error._result;
+				self.clientAlert.addAlert({
+					message: errOutput,
+					type: 'danger'
+				});
+				fileView.status = Status.Failed;
+				callback(error);
 			});
-			fileView.status = Status.Failed;
-			callback(error);
-		});
 	}
 
 

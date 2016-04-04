@@ -8,7 +8,7 @@
                 <div class="form1">
                     <label for="name">Load connection from saved</label>
                     <select class="form-control" [(ngModel)]="selectedConnInfo">
-                        <option *ngFor="#c of conectionInfoList" [value]="c">{{c}}</option>
+                        <option *ngFor="#c of conectionInfoList" [value]="c">{{c.profileName}}</option>
                     </select>
                 </div>
                 <div class="form2">
@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="form-fields-group">
-                <button type="submit" class="button btn btn-primary" [disabled]="!(server.valid&&userName.valid && password.valid) " (click)="onConnect()">Connect</button>
+                <button type="submit" class="button btn btn-primary" [disabled]="!(server.valid&&userName.valid && password.valid) " (click)="onConnect(dbConnection)">Connect</button>
                 <i *ngIf="isConnecting" class="fa fa-spinner fa-spin fa-lg" style="margin:.2em 0 0 1em;align-self:center;"></i>
             </div>            
             <div class="form1">
@@ -116,7 +116,7 @@
     <div class="col">
         <div class="form1">
             <label>
-                <input type="checkbox" [(ngModel)]="isKeepAllLogs">Keep all logs</label>
+                <input type="checkbox" [(ngModel)]="isKeepAllLogs">Keep all logs between each run</label>
             <button type="submit" class="btn btn-warning" (click)="clearAllLogs()">Clear logs</button>
         </div>
         <client-alert [message]="alerts"></client-alert>

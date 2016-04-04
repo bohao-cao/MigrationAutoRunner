@@ -36,31 +36,32 @@ module.exports = function(app){
 		
 	});
 
+
+	//return will be in a format of { "profileName": x, "_id": y}
 	app.get('/allConnectionInfo', function(req, res){
 		
-		ConnProfile.find(function(err, data){
+		var query = ConnProfile.find({}).select('profileName');
+
+		query.exec(function(err, data){
 			if(err)
 				return res.status(500).send(err);
 			else{
-				var ret = _.map(data, "profileName");
-				return res.status(200).send(ret);
+				//var ret = _.map(data, "profileName");
+				return res.status(200).send(data);
 			}
 		});
-
-		// if(fs.exists(connectionFile, (exists)=>{
-		// 	fs.readFile(connectionFile, "utf-8", function(err, data){
-		// 		if(err){
-		// 			res.status(500).send(err);
-		// 		}
-		// 		else{
-		// 			var jsonData = JSON.parse(data);
-		// 			var ret = _.map(jsonData, "profileName");
-		// 			res.status(200).send(ret);
-		// 		}
-
-		// 	})
-		// }));
+		
 	});
+
+	app.get('/connectionInfoDetail/:id', function(req,res){
+		ConnProfile.findById(req.params.id, function(err, data){
+			if(err)
+				return res.status(404).send(err);
+			else{
+				return res.status(200).send(data);
+			}
+		})
+	})
 
 	app.post('/connectionInfo', function(req, res){
 
