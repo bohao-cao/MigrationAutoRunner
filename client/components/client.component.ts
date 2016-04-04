@@ -48,7 +48,8 @@ export class ClientComponent{
 	isKeepAllLogs: boolean;
 
 	conectionInfoList: IConnectionProfile[] = [];
-	selectedConnInfo: IConnectionProfile = {profileName:""};
+	selectedConnInfo: IConnectionProfile = {profileName:"", _id:0};
+	selectedConnInfoStr: String;
 
 	constructor(private service: MigrationService){
 		this.dbConnection = { server: "", userName: "", password: "", databases: [] };
@@ -94,15 +95,17 @@ export class ClientComponent{
 			.then(
 			list => {
 				self.conectionInfoList = list;
-				if (list.length > 0)
-					self.selectedConnInfo = list[0] ;
+				if (list.length > 0){
+					self.selectedConnInfo = list[0];
+					self.selectedConnInfoStr = list[0].profileName;
+				}
+
 			},
 			err => {
 				console.log(err);
 			}
 			);
 	}
-
 
 	deleteSelected(){
 		let self = this;
@@ -169,6 +172,10 @@ export class ClientComponent{
 						
 					});					
 								
+	}
+
+	onSelectedChanged(event){
+		this.selectedConnInfo = this.conectionInfoList.find(o => o.profileName === this.selectedConnInfoStr);
 	}
 
 	fileChangeEvent(fileInput: File[]){

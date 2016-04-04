@@ -26,3 +26,12 @@ b. Open a new cmd prompt
 mongo
 
 
+
+//PRODUCTION
+1. Install MongoDB as a service(Start the service);
+	1a. on windows machine, the service configuration sits in D:\MongoDB\Server\3.2\bin
+	1b. Configuration source page can be found in http://blog.ajduke.in/2013/04/10/install-setup-and-start-mongodb-on-windows/
+2. Use Forever to start the backend (3a.PRODstartbackend.bat)
+	2a. the logs sits in C:\Users\bcao\.forever\
+
+3. Execute 5.startfrontend.bat

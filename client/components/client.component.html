@@ -7,8 +7,8 @@
             <div class="form-fields-group">
                 <div class="form1">
                     <label for="name">Load connection from saved</label>
-                    <select class="form-control" [(ngModel)]="selectedConnInfo">
-                        <option *ngFor="#c of conectionInfoList" [value]="c">{{c.profileName}}</option>
+                    <select class="form-control" [(ngModel)]="selectedConnInfoStr" (ngModelChange)="onSelectedChanged($event)">
+                        <option *ngFor="#c of conectionInfoList" [value]="c.profileName">{{c.profileName}}</option>
                     </select>
                 </div>
                 <div class="form2">
@@ -22,7 +22,7 @@
                 <div class="form-fields-group">
                     <div class="form1">
                         <label for="name">Database</label>
-                        <input type="text" class="form-control" id="databaseName" placeholder="localhost\sql12" [(ngModel)]="dbConnection.server" ngControl="server" #server="ngForm" required novalidate>
+                        <input type="text" class="form-control" id="databaseName" placeholder="<Your machine name>\sql12" [(ngModel)]="dbConnection.server" ngControl="server" #server="ngForm" required novalidate>
                     </div>
                     <div class="form2">
                         <button type="submit" class="btn btn-default" (click)="useDefaultServer()">Use Default</button>

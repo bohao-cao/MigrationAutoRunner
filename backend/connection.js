@@ -12,7 +12,7 @@ module.exports = function(app){
 			setTimeout(function(){
 				return res.send([{name:'A'},{name:'B'},{name:'C'}]);
 			}, 1000);
-			//return res.send([);
+			
 		}
 
 		var config = {
@@ -25,12 +25,12 @@ module.exports = function(app){
 		.then(function(){
 			var req = new sql.Request();
 			req.query('SELECT name FROM master.dbo.sysdatabases where name NOT IN (\'master\', \'tempdb\', \'model\', \'msdb\')')
-			.then(function(recordset){
-				console.log('send res:' + recordset);
+			.then(function(recordset){				
 				res.send(recordset);
 			})
 		})
 		.catch(function(err){
+			console.log('error allDatabases: ' + err);
 			res.status(400).send(err.message);
 		});		
 		
@@ -46,7 +46,7 @@ module.exports = function(app){
 			if(err)
 				return res.status(500).send(err);
 			else{
-				//var ret = _.map(data, "profileName");
+				console.log('error allConnectionInfo: ' + err);				
 				return res.status(200).send(data);
 			}
 		});
@@ -58,6 +58,7 @@ module.exports = function(app){
 			if(err)
 				return res.status(404).send(err);
 			else{
+				console.log('error connectionInfoById: ' + req.params.id + '; '+ err);				
 				return res.status(200).send(data);
 			}
 		})
@@ -78,8 +79,10 @@ module.exports = function(app){
 			if(err){
 				return res.status(400).send(err);
 			}
-			else
+			else{
+				console.log('error post connectionInfo: ' + err);
 				return res.status(200).send();
+			}
 		})
 	});
 
@@ -88,6 +91,7 @@ module.exports = function(app){
 			if(err)
 				return res.status(500).send(err);
 			else{
+				console.log('error delete connectionInfo by name: ' + req.params.name + "; " + err);
 				return res.status(200).send();
 			}
 		});
