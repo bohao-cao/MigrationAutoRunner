@@ -37,6 +37,6 @@ app.use(cors());
 var fileUpload = require('./fileUpload.js')(app);
 var connection = require('./connection.js')(app);
 
-var server = app.listen(27615,function(){
-	console.log("server running on localhost:27615");
+var server = app.listen(5000,function(){
+	console.log("server running on localhost:5000");
 });

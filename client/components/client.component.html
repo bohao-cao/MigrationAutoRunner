@@ -24,9 +24,9 @@
                         <label for="name">Database</label>
                         <input type="text" class="form-control" id="databaseName" placeholder="<Your machine name>\sql12" [(ngModel)]="dbConnection.server" ngControl="server" #server="ngForm" required novalidate>
                     </div>
-                    <div class="form2">
+<!--                     <div class="form2">
                         <button type="submit" class="btn btn-default" (click)="useDefaultServer()">Use Default</button>
-                    </div>
+                    </div> -->
                 </div>
                 <div [hidden]="server.valid|| server.pristine" class="alert alert-danger validation">
                     Server name is required.
@@ -50,7 +50,7 @@
                 <div class="form-fields-group">
                     <div class="form1">
                         <label for="Password">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" [(ngModel)]="dbConnection.password" ngControl="password" #password="ngForm" required>
+                        <input type="password" class="form-control" id="password" placeholder="Password" [(ngModel)]="dbConnection.password" ngControl="password" #password="ngForm" (keyup.enter)="onConnect(dbConnection)" required>
                     </div>
                 </div>
                 <div class="validation" [hidden]="password.valid|| password.pristine" class="alert alert-danger validation">
@@ -79,7 +79,7 @@
                     <button type="submit" class="btn btn-default" (click)="discardConnectionInfo()">Discard</button>
                 </div>
                 <div class="form2">
-                    <button type="submit" class="btn btn-default" (click)="saveConnectionInfo()">Save</button>
+                    <button type="submit" class="btn btn-default btn-primary" (click)="saveConnectionInfo()">Save</button>
                 </div>
             </div>
             <div class="group">

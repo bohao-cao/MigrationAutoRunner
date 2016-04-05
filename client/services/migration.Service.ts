@@ -117,7 +117,7 @@ export class MigrationService{
 		// in a real world app, we may send the error to some remote logging infrastructure
 		// instead of just logging it to the console
 		console.error('Error found:' + JSON.stringify(error));
-		return Promise.reject(error.message || error.json().error || 'Server error');
+		return Promise.reject(error.message || error.json().error || error.json().errmsg || 'Server error');
 	};
 }
 

@@ -136,6 +136,7 @@ export class ClientComponent{
 		this.isShowConnectionName = false;
 		this.service.SaveConnectionInfo(dbConnection, _.escape(this.profileName)).then(
 			success=>{
+				this.profileName = "";
 				this.loadConnectionInfo();
 				this.clientAlert.addAlert({
 					message: 'Connection Info successfully saved.',
@@ -143,6 +144,7 @@ export class ClientComponent{
 				});
 			},
 			error=>{
+				this.profileName = "";
 				this.clientAlert.addAlert({
 					message: 'Error during save connection info:' + error,
 					type: 'danger'

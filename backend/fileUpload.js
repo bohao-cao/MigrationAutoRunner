@@ -28,7 +28,7 @@ module.exports = function(app){
 				raw  = raw.replace(/^\uFEFF/, '');
 
 				//wrap regEx in //, the RegEx means check GO case insensitive
-				queries = _.split(raw, /[Gg][Oo]/);
+				queries = _.split(raw, /^[Gg][Oo]/);
 				var config = {
 				server: req.params.server,
 				user: req.params.userName,
