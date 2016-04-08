@@ -27,10 +27,12 @@ export class ClientAlert {
 
   addAlert(message: IAlert) {
     let timeout = 0;
-    if (message.type == "warning" || message.type == "success" || message.type == "info")
+    if (message.timeout !== undefined)
+      timeout = message.timeout;
+    else if (message.type == "warning" || message.type == "success" || message.type == "info")
       timeout = 5000;
-    if (message.type == "danger")
-    timeout = 0;
+    else if (message.type == "danger")
+      timeout = 0;
     this.alerts.push(
       {
         type: message.type,

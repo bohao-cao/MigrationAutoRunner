@@ -1,4 +1,4 @@
-import {Component,ElementRef, EventEmitter, OnInit, ViewChild} from 'angular2/core';
+import {Component,ElementRef, EventEmitter, OnInit, ViewChild, AfterViewInit} from 'angular2/core';
 import {NgIf, CORE_DIRECTIVES, NgForm} from 'angular2/common';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
@@ -25,7 +25,7 @@ import async from 'async';
 })
 
 
-export class ClientComponent{
+export class ClientComponent implements AfterViewInit {
 	@ViewChild(ClientAlert) clientAlert: ClientAlert; 
 	complete: EventEmitter = new EventEmitter();
 
@@ -57,6 +57,16 @@ export class ClientComponent{
 		this.isKeepAllLogs = true;
 
 		this.loadConnectionInfo();
+
+	}
+
+	ngAfterViewInit() {
+		// viewChild is set
+		this.clientAlert.addAlert({
+			message: 'For known issues please visit https://github.com/bohao-cao/MigrationAutoRunner/issues',
+			type: 'info',
+			timeout: 30000
+		});
 	}
 
 	//view event handler
