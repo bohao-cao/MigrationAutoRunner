@@ -8,9 +8,13 @@ import {Observable}     from 'rxjs/Observable';
 
 
 export class MigrationService{
+
 	_url = 'http://10.28.17.74:5000';
 
-	constructor(private http: Http){}
+	constructor(private http: Http){
+		if (navigator.appVersion.indexOf("Mac") != -1)
+			this._url = 'http://localhost:5000';
+	}
 
 	GetAllAvailableDatabases(dbConnection:IDbConnection){
 		let uri = this._url + '/allDatabases/' + encodeURIComponent(dbConnection.server) + '/' + encodeURIComponent(dbConnection.userName) 
