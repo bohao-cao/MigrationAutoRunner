@@ -28,8 +28,8 @@ module.exports = function(app){
 				raw  = raw.replace(/^\uFEFF/, '');
 
 				//wrap regEx in //, the RegEx means check GO case insensitive
-				queries = _.split(raw, /(Go|GO)$/);
-				//queries = _.split(raw, /(GO|go)/);
+				queries = _.split(raw, /[Gg][Oo]\r\n/);
+				
 				var config = {
 				server: req.params.server,
 				user: req.params.userName,
@@ -45,6 +45,9 @@ module.exports = function(app){
 			sql.connect(config).then(function(){			
 				
 				_(queries).forEach(function(query){
+					query = _.trim(query, 'GO');
+					//remove white spaces
+					query = _.trim(query);
 					if(query === '' || query === undefined)
 						return;
 					var q = query;
