@@ -43,10 +43,12 @@ module.exports = function(app){
 		var query = ConnProfile.find({}).select('profileName');
 
 		query.exec(function(err, data){
-			if(err)
+			if(err){
+				console.log('error allConnectionInfo: ' + err);	
 				return res.status(500).send(err);
+			}
 			else{
-				console.log('error allConnectionInfo: ' + err);				
+							
 				return res.status(200).send(data);
 			}
 		});
@@ -55,10 +57,11 @@ module.exports = function(app){
 
 	app.get('/connectionInfoDetail/:id', function(req,res){
 		ConnProfile.findById(req.params.id, function(err, data){
-			if(err)
+			if(err){
+				console.log('error connectionInfoById: ' + req.params.id + '; '+ err);	
 				return res.status(404).send(err);
-			else{
-				console.log('error connectionInfoById: ' + req.params.id + '; '+ err);				
+			}
+			else{			
 				return res.status(200).send(data);
 			}
 		})
@@ -77,10 +80,11 @@ module.exports = function(app){
 		var newConn = new ConnProfile(connectionInfo);
 		newConn.save(function(err){
 			if(err){
+				console.log('error post connectionInfo: ' + err);
 				return res.status(400).send(err);
 			}
 			else{
-				console.log('error post connectionInfo: ' + err);
+				
 				return res.status(200).send();
 			}
 		})
@@ -88,10 +92,11 @@ module.exports = function(app){
 
 	app.delete('/connectionInfo/:name', function(req,res){
 		ConnProfile.remove({profileName: req.params.name}, function(err, data){
-			if(err)
-				return res.status(500).send(err);
-			else{
+			if(err){
 				console.log('error delete connectionInfo by name: ' + req.params.name + "; " + err);
+				return res.status(500).send(err);
+			}
+			else{	
 				return res.status(200).send();
 			}
 		});

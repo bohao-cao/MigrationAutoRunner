@@ -1,4 +1,5 @@
 ThisIsA
 GO
 ThisIsAStill
-But I have a second line
+Go
+But I have a second golden line

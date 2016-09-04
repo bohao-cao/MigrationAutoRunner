@@ -16,7 +16,13 @@ module.exports = function(app){
 
 		if(process.platform =='darwin'){
 			setTimeout(function(){
-				fs.unlinkSync('uploads/' + req.file.filename);
+				var raw = fs.readFileSync('uploads/' + req.file.filename,'utf-8');
+				//remove utf8's BOM marker
+				raw  = raw.replace(/^\uFEFF/, '');
+
+				//wrap regEx in //, the RegEx means check GO case insensitive
+				queries = _.split(raw, /(Go|GO)$/);
+				queries2 = _.split(raw, /((go$)|(GO$)|(Go$))/);
 				return res.status(200).send('MacOS debug. fake execute file: ' + req.file.filename);
 			}, 1000);
 		}	
@@ -31,10 +37,10 @@ module.exports = function(app){
 				queries = _.split(raw, /(Go|GO)$/);
 				//queries = _.split(raw, /(GO|go)/);
 				var config = {
-				server: req.params.server,
-				user: req.params.userName,
-				password: req.params.password,
-				database: req.params.database
+					server: req.params.server,
+					user: req.params.userName,
+					password: req.params.password,
+					database: req.params.database
 				};						
 			}
 			catch(e){
