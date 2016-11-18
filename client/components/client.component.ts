@@ -1,6 +1,6 @@
-import {Component,ElementRef, EventEmitter, OnInit, ViewChild, AfterViewInit} from 'angular2/core';
-import {NgIf, CORE_DIRECTIVES, NgForm} from 'angular2/common';
-import {HTTP_PROVIDERS} from 'angular2/http';
+import {Component,ElementRef, EventEmitter, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import {NgIf, CORE_DIRECTIVES, NgForm} from '@angular/common';
+import {HTTP_PROVIDERS} from '@angular/http';
 import {IDbConnection, IDatabase} from '../interface/IDbConnection';
 import {IFileStatus, Status} from '../interface/IFileStatus';
 import {IConnectionProfile} from '../interface/IConnectionProfile';
@@ -8,7 +8,7 @@ import {IConnectionProfileDetail} from '../interface/IConnectionProfileDetail';
 import {MigrationService} from '../services/migration.Service';
 import {IAlert} from '../interface/IAlert';
 import {ClientAlert} from './client.alert';
-import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
+import { AlertModule  } from 'ng2-bootstrap/ng2-bootstrap';
 import _ from 'lodash';
 import async from 'async';
 

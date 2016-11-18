@@ -1,12 +1,12 @@
 import { Component, Input} from 'angular2/core';
 import { CORE_DIRECTIVES } from 'angular2/common';
-import { Alert } from 'ng2-bootstrap/ng2-bootstrap';
+import { AlertModule  } from 'ng2-bootstrap/ng2-bootstrap';
 import {IAlert} from '../interface/IAlert';
 
 @Component({
   selector: 'client-alert',
   templateUrl: "client/components/client.alert.html",
-  directives: [Alert, CORE_DIRECTIVES],
+  directives: [AlertModule, CORE_DIRECTIVES],
   //inputs:['message']
 })
 

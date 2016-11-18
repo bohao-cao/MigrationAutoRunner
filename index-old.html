@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <base href="/">
+    <title>Migration Folder Auto Runner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+    <link rel="stylesheet" href="client/css/styles.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <!-- 1. Load libraries -->
+    <!-- IE required polyfills, in this exact order -->
+    <script src="node_modules/es6-shim/es6-shim.min.js"></script>
+    <script src="node_modules/systemjs/dist/system-polyfills.js"></script>    
+    <script src="node_modules/angular2/bundles/angular2-polyfills.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+    <script src="node_modules/rxjs/bundles/Rx.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.dev.js"></script>
+    <script src="node_modules/angular2/bundles/router.dev.js"></script>
+    <script src="node_modules/angular2/bundles/http.dev.js"></script>
+    <script src="node_modules/lodash/lodash.js"></script>
+    <script src="node_modules/async/dist/async.js"></script>
+    <script src="node_modules/ng2-bootstrap/bundles/ng2-bootstrap.umd.js"></script>
+
+
+    <!-- 2. Configure SystemJS -->
+    <script>
+    //It tells SystemJs what to do when it sees a req for a module from app/ folder
+      System.config({
+        packages: {        
+          client: {
+            format: 'register',
+            defaultExtension: 'js',
+            }
+        },
+        paths:{
+            lodash: 'node_modules/lodash/lodash.js',
+            async:'node_modules/async/dist/async.js'
+        },
+        //ng2-bootstrap required
+        map: {
+            moment: 'node_modules/moment/moment.js'
+        }
+      });
+      System.import('client/main')
+            .then(null, console.error.bind(console));
+    </script>
+
+  </head>
+
+  <!-- 3. Display the application -->
+  <body>
+    <migration-auto-runner>Loading...</migration-auto-runner>
+  </body>
+
+</html>
